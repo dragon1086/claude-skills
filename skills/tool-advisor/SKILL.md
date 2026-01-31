@@ -1,234 +1,140 @@
 ---
 name: tool-advisor
-description: Analyzes natural language prompts to recommend optimal Claude Code tools, skills, and agents. Suggests harness patterns for complex iterative tasks and recommends tool installation when needed.
+description: Analyzes prompts to recommend optimal tools, skills, agents, and harness patterns. Searches marketplace if needed.
 argument-hint: <prompt or task description>
 metadata:
   author: dragon1086
-  version: "1.0.0"
-aliases:
-  - ta
-  - recommend
-  - advisor
+  version: "1.1.0"
+aliases: [ta, recommend, advisor]
 ---
 
-# Tool Advisor - Optimal Tool Recommendation Skill
+# Tool Advisor
 
-Analyzes your natural language prompt to:
-1. **Recommend optimal tools** - Select the best from your locally installed tools
-2. **Suggest harness patterns** - Propose autonomous loop structures for complex long-running tasks
-3. **Recommend installation** - Search and suggest tools if none are suitable
+Analyzes your prompt to recommend: **tools** → **skills** → **agents** → **harness patterns** → **marketplace search**
 
 ## Terminology
 
 | Term | Definition |
 |------|------------|
-| **Tool** | Built-in Claude Code capability (Read, Edit, Bash, Grep, Glob, etc.) |
-| **Skill** | Custom instructions in `~/.claude/skills/` or `.claude/skills/` that extend Claude's behavior |
-| **Agent** | Specialized subagent in `~/.claude/agents/` for delegating specific tasks |
-| **Plugin** | Packaged collection of skills/agents from a marketplace |
-| **Harness** | Orchestration pattern for autonomous iterative loops (analyze→execute→verify→repeat) |
+| **Tool** | Built-in capability (Read, Edit, Bash, Grep, Glob, Task, WebSearch) |
+| **Skill** | Custom instructions in `~/.claude/skills/` |
+| **Agent** | Subagent via `Task` tool - built-in, local (`~/.claude/agents/`), or marketplace |
+| **Harness** | Orchestration pattern for iterative loops (analyze→execute→verify→repeat) |
 
-## Analysis Process
+---
 
-### Phase 1: Check Local Tool Inventory
-
-**Run these commands first:**
+## Phase 1: Check Local Inventory
 
 ```bash
-# 1. Check installed plugins (if exists)
-test -f ~/.claude/plugins/installed_plugins.json && \
-  cat ~/.claude/plugins/installed_plugins.json | jq '.plugins | keys' 2>/dev/null || \
-  echo "No plugins installed"
-
-# 2. Check installed skills
-ls ~/.claude/skills/ 2>/dev/null || echo "No custom skills"
-
-# 3. Check installed agents
-ls ~/.claude/agents/ 2>/dev/null || echo "No custom agents"
+# Plugins
+cat ~/.claude/plugins/installed_plugins.json 2>/dev/null | jq '.plugins | keys' || echo "None"
+# Skills
+ls ~/.claude/skills/ 2>/dev/null || echo "None"
+# Agents
+ls ~/.claude/agents/ 2>/dev/null || echo "None"
 ```
-
-### Phase 2: Assess Task Complexity
-
-| Complexity | Characteristics | Recommended Approach | Harness Needed |
-|------------|-----------------|---------------------|----------------|
-| **Simple** | 1-2 files, clear task | Direct tools (Read/Edit) | No |
-| **Medium** | 3-5 files, multiple steps | Task agent or skill | No |
-| **Complex** | 5+ files, design+implement+test | `/feature-dev` or workflow | Optional |
-| **Long-running** | Loop until goal, multi-phase validation | **Harness pattern required** | **Yes** |
-
-### Phase 3: Determine Harness Necessity
-
-**Signals that harness is needed:**
-- "until complete", "keep trying", "iterate until"
-- "review → design → develop → QA → test" full cycle
-- "automatically", "autonomously", "long-term"
-- Multiple agents need coordination
-- Auto-retry/fix on failure required
-
-**Harness Pattern Types:**
-
-| Pattern | Description | Use When |
-|---------|-------------|----------|
-| **Goal Loop** | Autonomous retry until goal achieved | "Keep trying until tests pass" |
-| **Pipeline** | Sequential phases with validation | "Design, implement, then verify" |
-| **Parallel Orchestration** | Multiple agents working concurrently | "Backend and frontend in parallel" |
-| **Feedback Loop** | Iterative refinement with review | "Refine until quality threshold met" |
-
-### Phase 4: Recommend Tool Installation (if needed)
-
-If no suitable tools are locally available:
-
-1. **Search for available tools**
-```
-WebSearch: "Claude Code [task-type] plugin skill 2026"
-```
-
-2. **Suggest installation (Human-in-the-loop)**
-```markdown
-## Recommended Tool Installation
-
-No suitable tools found locally for [task].
-
-### Recommended Tools
-
-| Tool | Purpose | Install Command |
-|------|---------|-----------------|
-| [tool1] | [description] | `/plugin install [tool1]` |
-| [tool2] | [description] | `/plugin install [tool2]` |
-
-**Would you like to install these?** (yes/no/some)
-```
-
-3. **Proceed only after user approval**
 
 ---
 
-## Output Format
+## Phase 2: Assess Complexity & Harness Need
 
-Prompt: `$ARGUMENTS`
+| Complexity | Signals | Approach | Harness |
+|------------|---------|----------|---------|
+| Simple | 1-2 files | Direct tools | No |
+| Medium | 3-5 files | Skill or Task agent | No |
+| Complex | 5+ files, design needed | Workflow skill | Optional |
+| Long-running | "until", "keep trying", "반복" | **Harness required** | **Yes** |
 
-### Analysis Result Template
+**Harness Patterns:**
+- **Goal Loop**: Retry until goal ("테스트 통과할 때까지")
+- **Pipeline**: Sequential phases ("설계 → 구현 → 검증")
+- **Parallel**: Concurrent agents ("백엔드와 프론트 동시에")
+- **Feedback**: Iterative refinement ("품질 기준 충족까지")
+
+---
+
+## Phase 3: Select Agent (3-tier search)
+
+### Tier 1: Built-in Subagents (always available)
+
+| subagent_type | Use For |
+|---------------|---------|
+| `Explore` | Codebase exploration, "어디서", "where", "구조" |
+| `Plan` | Implementation design, "계획", "설계" |
+| `Bash` | Git, build, npm, docker commands |
+| `claude-code-guide` | Claude Code questions, MCP, hooks |
+| `general-purpose` | Complex multi-step research |
+
+### Tier 2: Local Custom Agents
+
+```bash
+for f in ~/.claude/agents/*.md; do [ -f "$f" ] && echo "$(basename "$f" .md)"; done
+```
+
+Check for domain-specific agents: `security-reviewer`, `api-designer`, `test-generator`, etc.
+
+### Tier 3: Marketplace Search (if Tier 1-2 insufficient)
+
+```
+WebSearch: "Claude Code [domain] agent plugin 2026"
+WebSearch: "Claude Code [task-type] skill 2026"
+```
+
+**Selection Priority**: Local custom → Built-in → Marketplace
+
+---
+
+## Phase 4: Recommend Installation (if needed)
 
 ```markdown
-## Prompt Analysis Result
+## Recommended Installation
 
-### 1. Task Classification
-- **Primary type**: [development/review/exploration/documentation/...]
-- **Secondary type**: [...]
+| Type | Name | Purpose | Install |
+|------|------|---------|---------|
+| Agent/Skill | [name] | [desc] | `/plugin marketplace add [source]` |
+
+**Install now?** (yes/no)
+```
+
+---
+
+## Output Template
+
+```markdown
+## Analysis Result
+
+### 1. Classification
+- **Type**: [development/review/exploration/...]
 - **Complexity**: [simple/medium/complex/long-running]
 
-### 2. Harness Necessity
-- **Required**: [yes/no]
-- **Reason**: [why needed or not]
-- **Recommended pattern**: [Goal Loop/Pipeline/Parallel/Feedback/none]
+### 2. Harness
+- **Required**: [yes/no] — **Pattern**: [Goal Loop/Pipeline/Parallel/Feedback/none]
 
-### 3. Local Tool Status
-- **Available**: [list of usable tools]
-- **Missing**: [tools needed but not installed]
+### 3. Agent Recommendation
+- **Source**: [built-in/local/marketplace]
+- **Agent**: [name] — **Reason**: [why]
 
 ### 4. Recommendation
-
-#### A. If local tools are sufficient
-
-**Optimal choice**: [tool name]
-**Usage**:
+**Use**: [tool/skill/agent name]
 ```
-[command or prompt]
+[usage example]
 ```
 
-#### B. If additional tools needed
-
-**Recommended installation**:
-
-| Tool | Purpose | Install |
-|------|---------|---------|
-| [tool] | [description] | `/plugin marketplace add [source]` then `/plugin install [tool]` |
-
-**After installation**:
-```
-[usage command]
-```
-
-**Install now?**
-
-### 5. Workflow Suggestion (if applicable)
-
-```
-[step-by-step execution order]
-```
+### 5. Installation (if needed)
+| Name | Install |
+|------|---------|
+| [x] | `/plugin marketplace add [source]` |
 ```
 
 ---
 
-## Built-in Tool Reference
+## Decision Flow
 
-These tools are always available in Claude Code:
-
-| Tool | Purpose | Example |
-|------|---------|---------|
-| `Read` | Read file contents | `Read file.js` |
-| `Edit` | Modify existing files | `Edit with old/new string` |
-| `Write` | Create new files | `Write to path with content` |
-| `Bash` | Execute shell commands | `Bash: npm test` |
-| `Glob` | Find files by pattern | `Glob: **/*.ts` |
-| `Grep` | Search file contents | `Grep: function.*export` |
-| `Task` | Delegate to subagent | `Task: explore codebase` |
-| `WebSearch` | Search the internet | `WebSearch: React 19 features` |
-| `WebFetch` | Fetch URL content | `WebFetch: https://...` |
-
----
-
-## Decision Tree
-
-```
-User Prompt
-      │
-      ▼
-┌─────────────────┐
-│ Harness needed? │
-└────────┬────────┘
-         │
-    ┌────┴────┐
-    ▼         ▼
-  [Yes]      [No]
-    │          │
-    ▼          ▼
- Local     Complexity?
-harness        │
-available? ┌───┴───┐
-    │      ▼       ▼
-┌───┴───┐ [Complex] [Simple/Medium]
-▼       ▼    │          │
-[Yes] [No]   │          ▼
-  │     │    │     Local tools
-  │     ▼    │     sufficient?
-  │  WebSearch    │
-  │  + suggest    ├───┬───┐
-  │  install  │   ▼       ▼
-  ▼     │     │  [Yes]   [No]
-Use   Install │    │       │
-guide  then   │    │   WebSearch
-       use    │    │   + suggest
-              │    ▼       │
-              │ Direct     ▼
-              │ tools    Install
-              │ or skill then use
-              ▼
-         Workflow skill
-         or harness
-```
-
----
-
-## Execution Guidelines
-
-1. **Phase 1**: Run Bash to check local tool inventory
-2. **Phase 2**: Analyze prompt (complexity, harness necessity)
-3. **Phase 3**: Determine if local tools are sufficient
-4. **Phase 4**: If not, WebSearch for tools → suggest installation
-5. **Phase 5**: Provide final recommendation with usage guide
-
-**Important**: Tool installation requires user approval (Human-in-the-loop)
+1. **Check local inventory** (plugins, skills, agents)
+2. **Assess complexity** → Determine if harness needed
+3. **Select agent**: Local custom → Built-in → Marketplace search
+4. **Recommend tool/skill** with usage guide
+5. **Suggest installation** if nothing suitable (human-in-the-loop)
 
 ---
 
@@ -236,154 +142,65 @@ guide  then   │    │   WebSearch
 
 ### Example 1: Simple Task
 
-**Input**:
-```
-Fix the typo in README.md
-```
+**Input**: `Fix the typo in README.md`
 
 **Output**:
 ```markdown
-## Prompt Analysis Result
+## Analysis Result
+### 1. Classification
+- **Type**: Bug fix — **Complexity**: Simple
 
-### 1. Task Classification
-- **Primary type**: Bug fix
-- **Complexity**: Simple (1 file, clear task)
-
-### 2. Harness Necessity
+### 2. Harness
 - **Required**: No
-- **Reason**: Single file, one-time fix
-
-### 3. Recommendation
-
-**Optimal choice**: Direct tools (Read + Edit)
-
-**Usage**:
-```
-1. Read README.md to find the typo
-2. Edit to fix it
-```
-```
-
-### Example 2: Complex Feature Development
-
-**Input**:
-```
-Review auth.js and refactor to use JWT tokens.
-Add tests and update the documentation.
-Use plan mode approach.
-```
-
-**Output**:
-```markdown
-## Prompt Analysis Result
-
-### 1. Task Classification
-- **Primary type**: Feature development/refactoring
-- **Secondary type**: Testing, documentation
-- **Complexity**: Complex (5+ files, design needed)
-
-### 2. Harness Necessity
-- **Required**: Optional (multi-phase but one-time)
-- **Reason**: Design→implement→test cycle, but not iterative
-- **Recommended pattern**: None (but consider Pipeline if issues arise)
-
-### 3. Local Tool Status
-- **Available**: feature-dev, code-review
-- **Missing**: None
 
 ### 4. Recommendation
-
-**Optimal choice**: `/feature-dev`
-
-**Reason**:
-- "plan mode" requested → design-first approach
-- Pattern analysis required → guided workflow helpful
-- Multi-phase with checkpoints → feature-dev provides structure
-
-**Usage**:
-```
-/feature-dev
-
-Prompt to enter:
-Review auth.js authentication flow.
-Refactor to use JWT tokens instead of sessions.
-Add unit tests for token validation.
-Update API documentation.
+**Use**: Direct tools (Read + Edit)
 ```
 
-### 5. Alternatives
-1. **EnterPlanMode** - For more freeform planning
-2. **Direct approach** - If familiar with the codebase
-```
+### Example 2: Complex + Marketplace Search
 
-### Example 3: Long-running Iterative Task
-
-**Input**:
-```
-Keep running the test suite and fix failures until all tests pass.
-```
+**Input**: `이 코드 보안 취약점 검토하고, 발견되면 자동 수정해서 테스트 통과할 때까지 반복해줘`
 
 **Output**:
 ```markdown
-## Prompt Analysis Result
+## Analysis Result
+### 1. Classification
+- **Type**: Security review + Bug fix — **Complexity**: Long-running
 
-### 1. Task Classification
-- **Primary type**: Testing/debugging
-- **Complexity**: Long-running (loop until goal)
+### 2. Harness
+- **Required**: Yes — **Pattern**: Goal Loop (fix until tests pass)
 
-### 2. Harness Necessity
-- **Required**: Yes
-- **Reason**: "until all tests pass" = goal-based loop
-- **Recommended pattern**: Goal Loop
+### 3. Agent Recommendation
+- **Source**: Marketplace (no local security agent)
+- **Agent**: `security-reviewer` — **Reason**: Security requires domain expertise
 
-### 3. Recommendation
+**Search**: `WebSearch: "Claude Code security review agent 2026"`
 
-**Approach**: Goal Loop Harness
+### 4. Recommendation
+**Phase 1**: Security scan with specialized agent
+**Phase 2**: Goal Loop — fix + test until pass
 
-**Structure**:
-```
-┌─────────────────────────────────┐
-│         Goal Loop Harness        │
-├─────────────────────────────────┤
-│                                  │
-│  ┌────────┐  ┌────────┐  ┌────┐ │
-│  │Run test│─▶│Analyze │─▶│Fix │ │
-│  └────────┘  │failures│  └──┬─┘ │
-│       ▲      └────────┘     │   │
-│       │                     │   │
-│       └─────────────────────┘   │
-│                                  │
-│  Exit: All tests pass OR        │
-│        max iterations reached   │
-└─────────────────────────────────┘
-```
+### 5. Installation
+| Name | Install |
+|------|---------|
+| security-scanner | `/plugin marketplace add github.com/example/security-scanner` |
 
-**Usage**:
-```bash
-# Manual loop approach (built-in)
-while ! npm test; do
-  echo "Tests failed, analyzing..."
-  # Claude analyzes and fixes
-done
-```
+**Install now?** (yes/no)
 
-**Or use orchestration skill if installed**
-```
+**Fallback** (without install): `Task` with `Explore` + manual review
 ```
 
 ---
 
-## Fallback Recommendations
+## Fallback (Built-in only)
 
-If specialized tools are unavailable, use these built-in approaches:
-
-| Need | Fallback Approach |
-|------|-------------------|
-| Iterative development | Shell script loop + Claude analysis |
-| Multi-agent coordination | Sequential prompts with shared context |
-| Complex planning | Markdown file to track state/progress |
-| Code review | Use `Task` with `code-reviewer` agent type |
-| Codebase exploration | Use `Task` with `Explore` agent type |
+| Need | Use |
+|------|-----|
+| Exploration | `Task` + `Explore` |
+| Planning | `Task` + `Plan` |
+| Code review | `Task` + `general-purpose` |
+| Claude Code help | `Task` + `claude-code-guide` |
+| Commands | `Task` + `Bash` |
 
 ---
 
