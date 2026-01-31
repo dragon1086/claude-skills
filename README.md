@@ -21,8 +21,9 @@ That's it. Two commands. You're ready.
 
 ---
 
-## 🚀 What's New in v1.1
+## 🚀 What's New in v1.2
 
+- **MCP Server Recommendation**: Image gen, DB, browser automation, APIs
 - **3-Tier Agent Search**: Built-in → Local → Marketplace
 - **Multi-Agent Orchestration**: Recommends agent combinations for complex tasks
 - **Token Efficient**: ~1,500 tokens (70% reduction from v1.0)
@@ -37,6 +38,7 @@ That's it. Two commands. You're ready.
 | "How do I set up a test-until-pass loop?" | Harness pattern auto-suggested |
 | "Is there a security review agent?" | 3-tier search finds it (local or marketplace) |
 | "How do I coordinate multiple agents?" | Orchestration pattern + Claude Code executes |
+| "Need to generate images / query DB" | MCP server recommendation |
 
 ---
 
@@ -53,6 +55,15 @@ Tier 2: Local Custom (~/.claude/agents/)
     ↓
 Tier 3: Marketplace Search (if needed)
 ```
+
+### 2.5. 🔌 MCP Server Recommendation
+| Task | MCP Server |
+|------|------------|
+| Image generation | nano-banana, replicate |
+| Database | postgres, sqlite |
+| Browser automation | puppeteer, playwright |
+| Notion/Docs | notion |
+| GitHub API | github |
 
 ### 3. 🔄 Harness Pattern Recommendation
 - **Goal Loop**: "테스트 통과할 때까지 반복"
@@ -82,38 +93,34 @@ Missing the right tool? Searches and suggests installation — with your approva
 ```
 → **Use**: Direct tools (Read + Edit)
 
-### Complex + Marketplace Search
+### Complex + MCP + Marketplace
 ```
-/ta 보안 취약점 검토하고 수정해서 테스트 통과할 때까지 반복해줘
+/ta 블로그 썸네일 만들고 DB에서 최근 글 가져와서 마케팅 포스트 작성해줘
 ```
 → **Output**:
 ```markdown
 ## Analysis Result
 
 ### 1. Classification
-- Type: Security review + Bug fix
-- Complexity: Long-running
-
-### 2. Harness
-- Required: Yes — Pattern: Goal Loop
+- Type: Content creation — Complexity: Complex
 
 ### 3. Agent Recommendation
-- Source: Marketplace (no local security agent)
-- Agent: security-reviewer
-- Search: "Claude Code security review agent 2026"
+- Agent: general-purpose
+
+### 3.5. MCP Recommendation
+- MCP: nano-banana (thumbnail) — Missing ✗
+- MCP: postgres (DB query) — Installed ✓
 
 ### 5. Installation
-| Name | Install |
-|------|---------|
-| security-scanner | `/plugin marketplace add github.com/...` |
+| Type | Name | Install |
+|------|------|---------|
+| MCP | nano-banana | Add to ~/.claude/mcp.json |
 
 Install now? (yes/no)
-
-Fallback: Task + Explore + manual review
 ```
 
 **You**: "설치하고 실행해"
-**Claude Code**: *(installs, scans, fixes, tests, done!)*
+**Claude Code**: *(configures MCP, generates image, queries DB, writes post!)*
 
 ---
 
@@ -151,6 +158,7 @@ You just say where to go. It drives.
 |---------|-------|--------|
 | v1.0 | 699 | ~5,500 |
 | v1.1 | 207 | ~1,500 |
+| v1.2 | 230 | ~1,600 |
 
 **70% reduction** — No billing surprises.
 
