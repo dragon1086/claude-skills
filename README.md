@@ -32,13 +32,13 @@ That's it. Two commands. You're ready.
 
 ## 😫 Before vs 😊 After
 
-| Before Tool Advisor | After Tool Advisor |
+| Without Tool Advisor | With Tool Advisor |
 |---------------------|-------------------|
-| "Should I use `Explore` or `Grep`?" | Instant recommendation with reasoning |
-| "How do I set up a test-until-pass loop?" | Harness pattern auto-suggested |
-| "Is there a security review agent?" | 3-tier search finds it (local or marketplace) |
-| "How do I coordinate multiple agents?" | Orchestration pattern + Claude Code executes |
-| "Need to generate images / query DB" | MCP server recommendation |
+| "Explore? Grep? Task? 뭘 써야 하지..." | `/ta 에러 처리 어디서 해?` → `Explore` 추천 |
+| "하네스? 오케스트레이션? 그게 뭔데?" | 자동으로 Goal Loop 패턴 제안 |
+| "보안 리뷰 에이전트가 있나?" | 3-tier 검색 (로컬 → 마켓플레이스) |
+| "이미지 생성하려면 MCP 설정을..." | `nano-banana` MCP 추천 + 설정 가이드 |
+| "여러 에이전트 조합은 어떻게?" | 추천 → "해줘" → Claude Code 자동 실행 |
 
 ---
 
@@ -121,6 +121,54 @@ Install now? (yes/no)
 
 **You**: "설치하고 실행해"
 **Claude Code**: *(configures MCP, generates image, queries DB, writes post!)*
+
+---
+
+## 🎯 Real-World Use Cases
+
+### 1. 오픈소스 프로젝트 마케팅
+```
+/ta prism-insight 최근 업데이트로 블로그 포스트 작성하고 썸네일도 만들어줘
+```
+**Tool Advisor 추천:**
+- `Explore` → CHANGELOG 분석
+- `nano-banana` MCP → 썸네일 생성
+- `general-purpose` → 포스트 작성
+
+**결과**: 한 번의 요청으로 분석 → 이미지 → 글 작성 완료
+
+### 2. 보안 리뷰 + 자동 수정
+```
+/ta 이 코드 보안 취약점 검토하고 수정해서 테스트 통과할 때까지 반복해줘
+```
+**Tool Advisor 추천:**
+- `security-reviewer` (마켓플레이스) 또는 `Explore` (fallback)
+- **Goal Loop** 하네스 패턴
+- `Bash` → 테스트 실행
+
+**결과**: 취약점 발견 → 수정 → 테스트 → 반복 (자동)
+
+### 3. 레거시 코드 마이그레이션
+```
+/ta 이 프로젝트 TypeScript로 마이그레이션 계획 세우고 실행해줘
+```
+**Tool Advisor 추천:**
+- `Plan` → 마이그레이션 전략 수립
+- `Explore` → 코드베이스 분석
+- **Pipeline** 하네스 (분석 → 변환 → 테스트)
+
+**결과**: 체계적인 단계별 마이그레이션
+
+### 4. 데이터 기반 리포트 생성
+```
+/ta DB에서 이번 달 매출 데이터 가져와서 리포트 만들어줘
+```
+**Tool Advisor 추천:**
+- `postgres` MCP → DB 쿼리
+- `general-purpose` → 리포트 작성
+- `Write` → 파일 저장
+
+**결과**: 데이터 추출부터 리포트 완성까지 자동화
 
 ---
 
