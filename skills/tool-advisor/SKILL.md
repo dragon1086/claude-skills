@@ -1,7 +1,7 @@
 ---
 name: tool-advisor
-description: 자연어 프롬프트를 분석하여 최적의 Claude Code 도구/스킬/에이전트를 추천합니다. 복잡한 작업은 harness 패턴을, 도구가 없으면 설치를 제안합니다.
-argument-hint: <프롬프트 또는 작업 설명>
+description: Analyzes prompts and recommends optimal Claude Code tools, skills, agents, and orchestration patterns. Suggests harness patterns for complex tasks and offers installation when tools are missing.
+argument-hint: <prompt or task description>
 metadata:
   author: aerok
   version: "2.1.0"

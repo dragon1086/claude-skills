@@ -10,8 +10,14 @@ Tool Advisor는 프롬프트를 분석하여 최적의 도구, 에이전트, MCP
 
 ## 설치
 
+**방법 1: 원라인 설치**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash
+```
+
+**방법 2: [skills.sh](https://skills.sh) 사용**
+```bash
+npx skills add dragon1086/claude-skills
 ```
 
 업데이트하려면 같은 명령어를 다시 실행하세요.

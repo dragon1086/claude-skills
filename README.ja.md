@@ -10,8 +10,14 @@ Tool Advisorはプロンプトを分析し、最適なツール、エージェ�
 
 ## インストール
 
+**方法1: ワンライナーインストール**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash
+```
+
+**方法2: [skills.sh](https://skills.sh)経由**
+```bash
+npx skills add dragon1086/claude-skills
 ```
 
 アップデートするには、同じコマンドを再度実行してください。

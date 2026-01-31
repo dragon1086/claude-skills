@@ -10,8 +10,14 @@ Tool Advisor 分析你的提示词，推荐最优的工具、代理、MCP 服务
 
 ## 安装
 
+**方式一：一行命令安装**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash
+```
+
+**方式二：通过 [skills.sh](https://skills.sh)**
+```bash
+npx skills add dragon1086/claude-skills
 ```
 
 更新时运行相同的命令即可。

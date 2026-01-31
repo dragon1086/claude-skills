@@ -10,8 +10,14 @@ Tool Advisor analiza tu prompt y recomienda la combinación óptima de herramien
 
 ## Instalación
 
+**Opción 1: Instalación en una línea**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash
+```
+
+**Opción 2: Vía [skills.sh](https://skills.sh)**
+```bash
+npx skills add dragon1086/claude-skills
 ```
 
 Para actualizar, ejecuta el mismo comando nuevamente.

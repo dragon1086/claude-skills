@@ -10,8 +10,14 @@ Tool Advisor анализирует ваш промпт и рекомендуе�
 
 ## Установка
 
+**Способ 1: Однострочная установка**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash
+```
+
+**Способ 2: Через [skills.sh](https://skills.sh)**
+```bash
+npx skills add dragon1086/claude-skills
 ```
 
 Для обновления выполните ту же команду снова.
