@@ -1,5 +1,7 @@
 # 🧭 Tool Advisor
 
+**English** | [한국어](./README.ko.md) | [日本語](./README.ja.md) | [中文](./README.zh-CN.md) | [Español](./README.es.md)
+
 **Stop guessing which tool to use. Let Claude Code decide.**
 
 Tool Advisor analyzes your prompt and recommends the optimal combination of tools, agents, MCP servers, and orchestration patterns — with **copy-paste commands** you can run immediately.
@@ -104,10 +106,6 @@ Use /feature-dev with Plan Mode
 ## Requirements
 
 - Claude Code CLI
-
-## Documentation
-
-- [한국어 문서](./README.ko.md)
 
 ## License
 

@@ -1,5 +1,7 @@
 # 🧭 Tool Advisor
 
+[English](./README.md) | **한국어** | [日本語](./README.ja.md) | [中文](./README.zh-CN.md) | [Español](./README.es.md)
+
 **어떤 도구를 써야 할지 고민하지 마세요. Claude Code가 알아서 추천합니다.**
 
 Tool Advisor는 프롬프트를 분석하여 최적의 도구, 에이전트, MCP 서버, 오케스트레이션 패턴 조합을 추천합니다. 그리고 **바로 복사해서 실행할 수 있는 명령어**까지 제공합니다.
@@ -104,10 +106,6 @@ tool-advisor로 분석해줘: 인증 모듈을 JWT로 리팩토링
 ## 요구 사항
 
 - Claude Code CLI
-
-## 문서
-
-- [English Documentation](./README.md)
 
 ## 라이선스
 
