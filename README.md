@@ -1,70 +1,136 @@
-# Claude Skills by dragon1086
+# 🧭 Tool Advisor
 
-> Curated skills for Claude Code power users - tool selection, workflow optimization, and productivity
+> **"Which tool should I use?"** — Stop guessing. Start knowing.
 
-## Quick Install
+You've installed dozens of plugins, skills, and agents in Claude Code.
+But every time you start a new task, the same question hits:
+*"Which one is the right tool for THIS job?"*
+
+**Tool Advisor analyzes your prompt and recommends the optimal tool automatically.**
+
+![Tool Advisor Demo](./assets/demo.gif)
+
+## ⚡ Quick Install
 
 ```bash
-# Add the marketplace (one-time)
 /plugin marketplace add dragon1086/claude-skills
-
-# Install the skill
 /plugin install tool-advisor@dragon1086-skills
 ```
 
-## Available Skills
+That's it. Two commands. You're ready.
 
-### Tool Advisor
+---
 
-**Meta-skill that analyzes your prompts and recommends optimal Claude Code tools**
+## 😫 Before vs 😊 After
 
-```bash
-# Usage
-/dragon1086-skills:tool-advisor "Review and refactor the authentication module with tests"
+| Before Tool Advisor | After Tool Advisor |
+|---------------------|-------------------|
+| "I need to refactor auth... should I use `/feature-dev`? Or just `Edit`? Maybe there's a review skill?" | `/tool-advisor "refactor auth module"` → "Use `/feature-dev` for this multi-file refactoring task" |
+| Scroll through `/help` trying to remember what each tool does | Get instant, context-aware recommendations |
+| Install plugins you never end up using | Only install what you actually need |
+| Complex tasks fail because you picked the wrong approach | Harness patterns suggested for iterative work |
+
+---
+
+## ✨ What It Does
+
+### 1. 🔍 Analyzes Your Task
+Understands complexity: Is this a quick fix or a multi-phase project?
+
+### 2. 📦 Checks Your Inventory
+Scans your installed plugins, skills, and agents — recommends from what you have.
+
+### 3. 🎯 Recommends the Best Fit
+Not just "use this tool" — explains *why* it's the right choice.
+
+### 4. 🔄 Suggests Patterns for Complex Work
+Need to loop until tests pass? It recommends harness patterns for autonomous iteration.
+
+### 5. 🛒 Finds Missing Tools
+Don't have the right tool? It searches and suggests installation — with your approval.
+
+---
+
+## 📊 Example
+
+**Your prompt:**
+```
+Review auth.js and refactor to JWT. Add tests. Use plan mode.
 ```
 
-**What it does:**
-- Analyzes your task complexity (simple/medium/complex/long-running)
-- Checks your locally installed tools, skills, and agents
-- Recommends the optimal approach for your specific task
-- Suggests harness patterns for iterative/long-running tasks
-- Recommends tool installation if needed (with your approval)
-
-**Example output:**
+**Tool Advisor output:**
 ```
 ## Prompt Analysis Result
 
 ### 1. Task Classification
-- Primary type: Feature development
-- Complexity: Complex (5+ files)
+- Primary type: Feature development/refactoring
+- Complexity: Complex (5+ files, design needed)
 
 ### 2. Harness Necessity
-- Required: No
-- Reason: Multi-phase but one-time task
+- Required: No (multi-phase but one-time)
+- Recommended pattern: None
 
-### 3. Recommendation
-Optimal choice: /feature-dev
-...
+### 3. Local Tool Status
+- Available: feature-dev, code-review, comprehensive-review
+- Missing: None
+
+### 4. Recommendation
+
+**Optimal choice**: `/feature-dev`
+
+**Why**:
+- "plan mode" requested → design-first approach fits
+- Multi-file changes → guided workflow prevents mistakes
+- Test requirement → feature-dev includes verification phase
+
+**Usage**:
+/feature-dev
+> Refactor auth.js to use JWT tokens, add unit tests
 ```
 
-## Why Use These Skills?
+---
 
-| Problem | Solution |
-|---------|----------|
-| "Which tool should I use for this task?" | Tool Advisor analyzes and recommends |
-| "I have many plugins but don't know which fits" | Checks your local inventory first |
-| "Complex task needs orchestration" | Suggests harness patterns |
-| "Missing a tool for this job" | Searches and suggests installation |
+## 🤔 FAQ
 
-## Requirements
+<details>
+<summary><strong>Q: Does it work if I have no plugins installed?</strong></summary>
 
-- Claude Code 1.0.33 or later
-- For full functionality: `jq` installed (optional, for plugin inventory check)
+Yes! It recommends built-in tools (Read, Edit, Bash, Grep, Glob, Task) and suggests plugins to install if needed.
+</details>
 
-## License
+<details>
+<summary><strong>Q: Will it install things without asking?</strong></summary>
 
-MIT
+Never. All installations require your explicit approval (Human-in-the-loop).
+</details>
 
-## Contributing
+<details>
+<summary><strong>Q: What's a "harness pattern"?</strong></summary>
 
-Issues and PRs welcome at [github.com/dragon1086/claude-skills](https://github.com/dragon1086/claude-skills)
+An orchestration loop for tasks like "keep running tests until they pass." Tool Advisor detects when you need one and explains how to set it up.
+</details>
+
+<details>
+<summary><strong>Q: Does it work with custom skills I created?</strong></summary>
+
+Yes! It scans `~/.claude/skills/` and `.claude/skills/` to find your custom skills.
+</details>
+
+---
+
+## 📋 Requirements
+
+- Claude Code 1.0.33+
+- Optional: `jq` (for detailed plugin inventory)
+
+---
+
+## 🤝 Contributing
+
+Found a bug? Have an idea? [Open an issue](https://github.com/dragon1086/claude-skills/issues) or submit a PR.
+
+---
+
+## 📜 License
+
+MIT © 2026 dragon1086
