@@ -1,16 +1,16 @@
 ---
 name: tool-advisor
-description: Analyzes prompts to recommend optimal tools, skills, agents, and harness patterns. Searches marketplace if needed.
+description: Analyzes prompts to recommend optimal tools, skills, agents, harness patterns, and suggests plan mode when needed.
 argument-hint: <prompt or task description>
 metadata:
   author: dragon1086
-  version: "1.2.0"
+  version: "1.3.0"
 aliases: [ta, recommend, advisor]
 ---
 
 # Tool Advisor
 
-Analyzes your prompt to recommend: **tools** → **skills** → **agents** → **MCP servers** → **harness patterns**
+Analyzes your prompt to recommend: **plan mode** → **tools** → **agents** → **MCP servers** → **harness patterns**
 
 ## Terminology
 
@@ -49,10 +49,37 @@ cat ~/.claude/mcp.json 2>/dev/null | jq '.mcpServers | keys' || echo "None"
 | Long-running | "until", "keep trying", "반복" | **Harness required** | **Yes** |
 
 **Harness Patterns:**
-- **Goal Loop**: Retry until goal ("테스트 통과할 때까지")
-- **Pipeline**: Sequential phases ("설계 → 구현 → 검증")
-- **Parallel**: Concurrent agents ("백엔드와 프론트 동시에")
-- **Feedback**: Iterative refinement ("품질 기준 충족까지")
+- **Goal Loop**: Retry until goal ("until tests pass")
+- **Pipeline**: Sequential phases ("design → implement → verify")
+- **Parallel**: Concurrent agents ("backend and frontend simultaneously")
+- **Feedback**: Iterative refinement ("until quality threshold met")
+
+---
+
+## Phase 2.5: Plan Mode Recommendation
+
+**When to recommend `EnterPlanMode` BEFORE tool selection:**
+
+| Signal | Plan Mode |
+|--------|-----------|
+| "I'm not sure how to approach this" | **Strongly recommend** |
+| 5+ files expected to change | **Recommend** |
+| Architectural decisions needed | **Recommend** |
+| Multiple valid approaches possible | **Recommend** |
+| "design", "architect", "plan" in prompt | **Recommend** |
+| New feature implementation | **Recommend** |
+| 1-2 files, clear task | Not needed |
+| Simple bug fix | Not needed |
+
+**Plan Mode Output:**
+```markdown
+### 2.5. Plan Mode
+- **Recommended**: Yes
+- **Reason**: [why plan mode helps here]
+- **Suggest**: Run `EnterPlanMode` first, then execute with recommended tools
+```
+
+**Key insight**: For complex tasks, planning BEFORE execution prevents wasted effort.
 
 ---
 
@@ -97,12 +124,12 @@ cat ~/.claude/mcp.json 2>/dev/null | jq '.mcpServers | keys'
 
 | Task Signal | MCP Server | Purpose |
 |-------------|------------|---------|
-| 이미지 생성, thumbnail, banner | `nano-banana`, `replicate` | Image generation |
-| DB 쿼리, 데이터베이스 | `postgres`, `sqlite` | Database access |
-| 브라우저, 스크래핑, 크롤링 | `puppeteer`, `playwright` | Browser automation |
-| 노션, 문서 | `notion` | Notion API |
+| image, thumbnail, banner | `nano-banana`, `replicate` | Image generation |
+| DB, database, query | `postgres`, `sqlite` | Database access |
+| browser, scrape, crawl | `puppeteer`, `playwright` | Browser automation |
+| notion, docs | `notion` | Notion API |
 | GitHub API | `github` | GitHub operations |
-| 파일 시스템 (외부) | `filesystem` | External file access |
+| external filesystem | `filesystem` | External file access |
 
 **If MCP needed but not installed:**
 ```
@@ -137,6 +164,10 @@ WebSearch: "Claude Code [domain] MCP server 2026"
 ### 2. Harness
 - **Required**: [yes/no] — **Pattern**: [Goal Loop/Pipeline/Parallel/Feedback/none]
 
+### 2.5. Plan Mode (if complexity >= medium)
+- **Recommended**: [yes/no]
+- **Reason**: [why plan mode helps or not needed]
+
 ### 3. Agent Recommendation
 - **Source**: [built-in/local/marketplace]
 - **Agent**: [name] — **Reason**: [why]
@@ -162,10 +193,11 @@ WebSearch: "Claude Code [domain] MCP server 2026"
 
 1. **Check local inventory** (plugins, skills, agents, MCP)
 2. **Assess complexity** → Determine if harness needed
-3. **Select agent**: Local custom → Built-in → Marketplace search
-4. **Check MCP needs**: Image, DB, browser, APIs
-5. **Recommend tool/skill/MCP** with usage guide
-6. **Suggest installation** if needed (human-in-the-loop)
+3. **Check plan mode need** → Recommend `EnterPlanMode` if complex/uncertain
+4. **Select agent**: Local custom → Built-in → Marketplace search
+5. **Check MCP needs**: Image, DB, browser, APIs
+6. **Recommend tool/skill/MCP** with usage guide
+7. **Suggest installation** if needed (human-in-the-loop)
 
 ---
 
@@ -184,42 +216,72 @@ WebSearch: "Claude Code [domain] MCP server 2026"
 ### 2. Harness
 - **Required**: No
 
+### 2.5. Plan Mode
+- **Recommended**: No — Simple single-file fix
+
 ### 4. Recommendation
 **Use**: Direct tools (Read + Edit)
 ```
 
-### Example 2: Complex + MCP + Marketplace
+### Example 2: Complex Task with Plan Mode
 
-**Input**: `블로그 썸네일 이미지 만들고, DB에서 최근 글 가져와서 마케팅 포스트 작성해줘`
+**Input**: `Refactor the authentication module to use JWT tokens`
 
 **Output**:
 ```markdown
 ## Analysis Result
 ### 1. Classification
-- **Type**: Content creation + Data retrieval — **Complexity**: Complex
+- **Type**: Refactoring — **Complexity**: Complex
+
+### 2. Harness
+- **Required**: No (one-time refactoring)
+
+### 2.5. Plan Mode
+- **Recommended**: Yes
+- **Reason**: Multiple files affected, architectural decision (JWT implementation strategy)
+- **Suggest**: Run `EnterPlanMode` first to design the approach
+
+### 3. Agent Recommendation
+- **Source**: Built-in
+- **Agent**: `Plan` → then `general-purpose` for execution
+
+### 4. Recommendation
+**Step 1**: `EnterPlanMode` — Design JWT integration strategy
+**Step 2**: After plan approval, execute with `feature-dev` or direct tools
+```
+
+### Example 3: MCP + Multi-step Task
+
+**Input**: `Create a blog thumbnail and fetch recent posts from DB to write a marketing post`
+
+**Output**:
+```markdown
+## Analysis Result
+### 1. Classification
+- **Type**: Content creation — **Complexity**: Complex
 
 ### 2. Harness
 - **Required**: No (one-time task)
 
+### 2.5. Plan Mode
+- **Recommended**: No — Clear sequential steps, no architectural decisions
+
 ### 3. Agent Recommendation
-- **Source**: Built-in
-- **Agent**: `general-purpose` — **Reason**: Multi-step content task
+- **Agent**: `general-purpose` — Multi-step content task
 
 ### 3.5. MCP Recommendation
-- **MCP**: `nano-banana` — **Purpose**: Thumbnail image generation
-- **MCP**: `postgres` — **Purpose**: Fetch recent posts from DB
-
-**Installed**: postgres ✓ | **Missing**: nano-banana ✗
+- **MCP**: `nano-banana` — Thumbnail generation | **Missing** ✗
+- **MCP**: `postgres` — DB query | **Installed** ✓
 
 ### 4. Recommendation
 **Phase 1**: Fetch data via `postgres` MCP
 **Phase 2**: Generate thumbnail via `nano-banana` MCP
-**Phase 3**: Write marketing post with `general-purpose` agent
+**Phase 3**: Write post with `general-purpose` agent
 
 ### 5. Installation
-| Type | Name | Install |
-|------|------|---------|
-| MCP | nano-banana | Add to `~/.claude/mcp.json` |
+| MCP | Install |
+|-----|---------|
+| nano-banana | Add to `~/.claude/mcp.json` |
 
 **Install now?** (yes/no)
 ```
