@@ -9,24 +9,19 @@ Tool Advisor는 프롬프트를 분석하여 최적의 도구, 에이전트, MCP
 ## 설치
 
 ```bash
-# 마켓플레이스 추가 (최초 1회)
-/plugin marketplace add dragon1086/claude-skills
-
-# 전역 설치 (기본값)
-/plugin install tool-advisor@adv
-
-# 또는 현재 프로젝트에만 설치
-/plugin install tool-advisor@adv --scope project
+curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash
 ```
+
+업데이트하려면 같은 명령어를 다시 실행하세요.
 
 ## 사용법
 
 자연스럽게 대화하듯 요청하세요:
 
 ```
-"tool-advisor로 이 작업 분석해줘: 인증 모듈 리팩토링"
+"tool-advisor로 분석해줘: 인증 모듈 리팩토링"
+"tool-advisor, 이 데이터베이스 마이그레이션 어떻게 해야 해?"
 "사용자 인증 구현하려면 어떤 방법이 좋을까?"
-"데이터베이스 마이그레이션 어떻게 할지 추천해줘"
 ```
 
 **tool-advisor**를 언급하거나 도구 추천을 요청하면 스킬이 활성화됩니다.
@@ -46,7 +41,7 @@ Tool Advisor는 프롬프트를 분석하여 최적의 도구, 에이전트, MCP
 │ 5. 에이전트 선택 (3단계)      │
 │ 6. MCP 필요 여부 확인        │
 │ 7. 설치 제안                 │
-│ 8. Quick Action 테이블       │  ← NEW
+│ 8. Quick Action 테이블       │
 └─────────────────────────────┘
     ↓
 🎯 바로 복사해서 실행 가능한 명령어
@@ -106,23 +101,13 @@ tool-advisor로 분석해줘: 인증 모듈을 JWT로 리팩토링
 → "계획 먼저"를 권장 (5+ 파일, 보안 민감)
 ```
 
-## 명령어 레퍼런스
-
-| 명령어 | 설명 |
-|--------|------|
-| `/adv:tool-advisor` | 전체 이름 |
-| `/adv:ta` | 짧은 형태 |
-| `/adv:도구추천` | 한국어 별칭 |
-
 ## 요구 사항
 
 - Claude Code CLI
-- 선택: `jq` (상세 인벤토리 확인용)
 
 ## 문서
 
 - [English Documentation](./README.md)
-- [Changelog](./CHANGELOG.md)
 
 ## 라이선스
 

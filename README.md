@@ -9,24 +9,19 @@ Tool Advisor analyzes your prompt and recommends the optimal combination of tool
 ## Install
 
 ```bash
-# Add marketplace (one-time)
-/plugin marketplace add dragon1086/claude-skills
-
-# Install globally (default)
-/plugin install tool-advisor@adv
-
-# Or install for current project only
-/plugin install tool-advisor@adv --scope project
+curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash
 ```
+
+To update, run the same command again.
 
 ## Usage
 
 Just ask naturally:
 
 ```
-"Analyze this task with tool-advisor: refactor the auth module"
-"What's the best approach for implementing user authentication?"
+"Analyze with tool-advisor: refactor the auth module"
 "tool-advisor, how should I tackle this database migration?"
+"What's the best approach for implementing user authentication?"
 ```
 
 The skill activates when you mention **tool-advisor** or ask for tool recommendations.
@@ -46,7 +41,7 @@ Your Prompt
 │ 5. Select agents (3-tier)       │
 │ 6. Check MCP needs              │
 │ 7. Suggest installation         │
-│ 8. Provide Quick Action table   │  ← NEW
+│ 8. Provide Quick Action table   │
 └─────────────────────────────────┘
     ↓
 🎯 Copy-paste commands ready to run
@@ -67,7 +62,7 @@ Your Prompt
 
 **Input:**
 ```
-Analyze this with tool-advisor: Refactor auth module to use JWT tokens
+Analyze with tool-advisor: Refactor auth module to use JWT tokens
 ```
 
 **Output:**
@@ -97,32 +92,22 @@ Use /feature-dev with Plan Mode
 
 ## 🎯 Quick Action
 
-| Your situation       | Copy & paste                        |
-|---------------------|-------------------------------------|
-| Plan first          | `Plan Mode로 JWT 리팩토링 계획 세워줘` |
-| Guided development  | `/feature-dev`                      |
-| Just do it          | `auth를 JWT로 리팩토링해줘`           |
+| Your situation       | Copy & paste                     |
+|---------------------|----------------------------------|
+| Plan first          | `Plan the JWT refactoring`       |
+| Guided development  | `/feature-dev`                   |
+| Just do it          | `Refactor auth to use JWT`       |
 
 → Recommended: "Plan first" (5+ files, security-sensitive)
 ```
 
-## Command Reference
-
-| Command | Description |
-|---------|-------------|
-| `/adv:tool-advisor` | Full name |
-| `/adv:ta` | Short form |
-| `/adv:도구추천` | Korean alias |
-
 ## Requirements
 
 - Claude Code CLI
-- Optional: `jq` for detailed inventory check
 
 ## Documentation
 
 - [한국어 문서](./README.ko.md)
-- [Changelog](./CHANGELOG.md)
 
 ## License
 

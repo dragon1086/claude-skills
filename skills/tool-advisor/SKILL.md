@@ -1,303 +1,352 @@
 ---
 name: tool-advisor
-description: Analyzes prompts to recommend optimal tools, skills, agents, harness patterns, and suggests plan mode when needed.
-argument-hint: <prompt or task description>
+description: 자연어 프롬프트를 분석하여 최적의 Claude Code 도구/스킬/에이전트를 추천합니다. 복잡한 작업은 harness 패턴을, 도구가 없으면 설치를 제안합니다.
+argument-hint: <프롬프트 또는 작업 설명>
 metadata:
-  author: dragon1086
-  version: "1.3.0"
-aliases: [ta, recommend, advisor]
+  author: aerok
+  version: "2.1.0"
+aliases:
+  - ta
+  - 도구추천
 ---
 
-# Tool Advisor
+# Tool Advisor v2.0 - 최적 도구 추천 스킬
 
-Analyzes your prompt to recommend: **plan mode** → **tools** → **agents** → **MCP servers** → **harness patterns**
+사용자의 자연어 프롬프트를 분석하여:
+1. **최적 도구 추천** - 로컬 설치된 도구 중 최적 선택
+2. **Harness 패턴 추천** - 복잡한 장기 작업 시 자동 루프 구조 제안
+3. **도구 설치 제안** - 필요한 도구가 없으면 웹 검색 후 설치 권유
 
-## Terminology
+## 분석 프로세스
 
-| Term | Definition |
-|------|------------|
-| **Tool** | Built-in capability (Read, Edit, Bash, Grep, Glob, Task, WebSearch) |
-| **Skill** | Custom instructions in `~/.claude/skills/` |
-| **Agent** | Subagent via `Task` tool - built-in, local (`~/.claude/agents/`), or marketplace |
-| **MCP** | External tool servers in `~/.claude/mcp.json` (DB, image gen, APIs) |
-| **Harness** | Orchestration pattern for iterative loops (analyze→execute→verify→repeat) |
+### Phase 1: 로컬 도구 인벤토리 확인
 
----
-
-## Phase 1: Check Local Inventory
+**반드시 먼저 실행:**
 
 ```bash
-# Plugins
-cat ~/.claude/plugins/installed_plugins.json 2>/dev/null | jq '.plugins | keys' || echo "None"
-# Skills
-ls ~/.claude/skills/ 2>/dev/null || echo "None"
-# Agents
-ls ~/.claude/agents/ 2>/dev/null || echo "None"
-# MCP Servers
-cat ~/.claude/mcp.json 2>/dev/null | jq '.mcpServers | keys' || echo "None"
+# 1. 설치된 플러그인 확인
+cat ~/.claude/plugins/installed_plugins.json | jq 'keys'
+
+# 2. 설치된 스킬 확인
+ls ~/.claude/skills/
+
+# 3. 설치된 에이전트 확인
+ls ~/.claude/agents/
 ```
 
----
+위 명령어로 현재 설치된 도구 목록을 파악합니다.
 
-## Phase 2: Assess Complexity & Harness Need
+### Phase 2: 작업 복잡도 및 Harness 필요성 평가
 
-| Complexity | Signals | Approach | Harness |
-|------------|---------|----------|---------|
-| Simple | 1-2 files | Direct tools | No |
-| Medium | 3-5 files | Skill or Task agent | No |
-| Complex | 5+ files, design needed | Workflow skill | Optional |
-| Long-running | "until", "keep trying", "반복" | **Harness required** | **Yes** |
+| 복잡도 | 특징 | 추천 접근 | Harness 필요 |
+|--------|------|----------|-------------|
+| **단순** | 1-2 파일, 명확한 작업 | 직접 도구 (Read/Edit) | 아니오 |
+| **중간** | 3-5 파일, 여러 단계 | Task 에이전트 또는 스킬 | 아니오 |
+| **복잡** | 5+ 파일, 설계+구현+테스트 | `/feature-dev` + 워크플로우 | 선택적 |
+| **장기/반복** | 목표 완료까지 루프, 다단계 검증 | **Harness 패턴 필수** | **예** |
 
-**Harness Patterns:**
-- **Goal Loop**: Retry until goal ("until tests pass")
-- **Pipeline**: Sequential phases ("design → implement → verify")
-- **Parallel**: Concurrent agents ("backend and frontend simultaneously")
-- **Feedback**: Iterative refinement ("until quality threshold met")
+### Phase 3: Harness 필요 여부 판단
 
----
+**Harness가 필요한 신호:**
+- "목표 완료까지", "될 때까지", "반복해서"
+- "검토 → 설계 → 개발 → QA → 테스트" 전체 사이클
+- "자동으로", "알아서", "장기간"
+- 여러 에이전트 조율 필요
+- 실패 시 자동 재시도/수정 필요
 
-## Phase 2.5: Plan Mode Recommendation
+**Harness 패턴 종류:**
 
-**When to recommend `EnterPlanMode` BEFORE tool selection:**
+| 패턴 | 설명 | 도구 |
+|------|------|------|
+| **Ralph 패턴** | 목표 완료까지 자율 반복 | `ralph-orchestrator` |
+| **RIPER 워크플로우** | Research→Innovate→Plan→Execute→Review 순환 | `riper-workflow` |
+| **Spec 워크플로우** | 요구사항→설계→구현→검증 파이프라인 | `spec-workflow` |
+| **Full-stack 오케스트레이션** | 백엔드→프론트→테스트→배포 조율 | `full-stack-orchestration` |
+| **Claude Flow** | 분산 에이전트 스웜 | `claude-flow` |
 
-| Signal | Plan Mode |
-|--------|-----------|
-| "I'm not sure how to approach this" | **Strongly recommend** |
-| 5+ files expected to change | **Recommend** |
-| Architectural decisions needed | **Recommend** |
-| Multiple valid approaches possible | **Recommend** |
-| "design", "architect", "plan" in prompt | **Recommend** |
-| New feature implementation | **Recommend** |
-| 1-2 files, clear task | Not needed |
-| Simple bug fix | Not needed |
+### Phase 4: 도구 부족 시 설치 제안
 
-**Plan Mode Output:**
+로컬에 적절한 도구가 없으면:
+
+1. **WebSearch로 최신 도구 탐색**
+```
+WebSearch: "Claude Code [작업유형] plugin workflow 2026"
+```
+
+2. **사용자에게 설치 제안 (Human-in-the-loop)**
 ```markdown
-### 2.5. Plan Mode
-- **Recommended**: Yes
-- **Reason**: [why plan mode helps here]
-- **Suggest**: Run `EnterPlanMode` first, then execute with recommended tools
+## 추천 도구 설치 제안
+
+현재 로컬에 [작업]에 적합한 도구가 없습니다.
+
+### 추천 설치 목록
+
+| 도구 | 용도 | 설치 명령 |
+|------|------|----------|
+| [도구1] | [설명] | `/plugin install [도구1]` |
+| [도구2] | [설명] | `/plugin install [도구2]` |
+
+**설치하시겠습니까?** (예/아니오/일부만)
 ```
 
-**Key insight**: For complex tasks, planning BEFORE execution prevents wasted effort.
+3. **사용자 승인 후 설치 진행**
 
 ---
 
-## Phase 3: Select Agent (3-tier search)
+## 출력 형식
 
-### Tier 1: Built-in Subagents (always available)
+프롬프트: `$ARGUMENTS`
 
-| subagent_type | Use For |
-|---------------|---------|
-| `Explore` | Codebase exploration, "어디서", "where", "구조" |
-| `Plan` | Implementation design, "계획", "설계" |
-| `Bash` | Git, build, npm, docker commands |
-| `claude-code-guide` | Claude Code questions, MCP, hooks |
-| `general-purpose` | Complex multi-step research |
+### 분석 결과 템플릿
 
-### Tier 2: Local Custom Agents
+```markdown
+## 프롬프트 분석 결과
 
+### 1. 작업 분류
+- **주요 유형**: [개발/리뷰/탐색/비즈니스/...]
+- **부가 유형**: [...]
+- **복잡도**: [단순/중간/복잡/장기반복]
+
+### 2. Harness 필요성
+- **필요 여부**: [예/아니오]
+- **이유**: [왜 필요하거나 불필요한지]
+- **추천 패턴**: [Ralph/RIPER/Spec/Full-stack/없음]
+
+### 3. 로컬 도구 현황
+- **설치됨**: [사용 가능한 도구 목록]
+- **부족함**: [필요하지만 없는 도구]
+
+### 4. 추천
+
+#### A. 로컬 도구로 충분한 경우
+
+**최적 추천**: [도구명]
+**사용 방법**:
+```
+[명령어 또는 프롬프트]
+```
+
+#### B. 추가 도구 설치가 필요한 경우
+
+**설치 권장 도구**:
+
+| 도구 | 용도 | 설치 |
+|------|------|------|
+| [도구] | [설명] | `/plugin marketplace add [source]` 후 `/plugin install [도구]` |
+
+**설치 후 사용법**:
+```
+[명령어]
+```
+
+**지금 설치하시겠습니까?**
+
+### 5. 워크플로우 제안 (해당 시)
+
+```
+[단계별 실행 순서]
+```
+
+---
+
+## 🎯 지금 바로 실행
+
+| 당신의 상황 | 복사해서 붙여넣기 |
+|------------|------------------|
+| [상황1] | `[명령어1]` |
+| [상황2] | `[명령어2]` |
+| [상황3] | `[명령어3]` |
+
+**→ 이 작업은 "[권장 옵션]"을 권장** ([이유])
+```
+
+---
+
+## Harness 패턴 상세
+
+### Ralph 패턴 (자율 반복 루프)
+
+**언제 사용**: 목표 완료까지 자동으로 반복해야 할 때
+
+**구조**:
+```
+┌─────────────────────────────────────────┐
+│              Ralph Harness               │
+├─────────────────────────────────────────┤
+│                                          │
+│  ┌──────┐    ┌──────┐    ┌──────┐       │
+│  │ 분석 │───▶│ 실행 │───▶│ 검증 │       │
+│  └──────┘    └──────┘    └──┬───┘       │
+│       ▲                     │            │
+│       │     실패 시 재시도   │            │
+│       └─────────────────────┘            │
+│                                          │
+│  종료 조건: 목표 달성 OR 최대 반복 도달   │
+│  안전장치: circuit breaker, rate limit   │
+│                                          │
+└─────────────────────────────────────────┘
+```
+
+**설치 확인**:
 ```bash
-for f in ~/.claude/agents/*.md; do [ -f "$f" ] && echo "$(basename "$f" .md)"; done
+# ralph-orchestrator 설치 여부 확인
+cat ~/.claude/plugins/installed_plugins.json | grep -i ralph
 ```
 
-Check for domain-specific agents: `security-reviewer`, `api-designer`, `test-generator`, etc.
-
-### Tier 3: Marketplace Search (if Tier 1-2 insufficient)
-
-```
-WebSearch: "Claude Code [domain] agent plugin 2026"
-WebSearch: "Claude Code [task-type] skill 2026"
-```
-
-**Selection Priority**: Local custom → Built-in → Marketplace
-
----
-
-## Phase 3.5: MCP Server Recommendation
-
-Check if task requires external tools:
-
+**미설치 시**:
 ```bash
-cat ~/.claude/mcp.json 2>/dev/null | jq '.mcpServers | keys'
+/plugin marketplace add wshobson/agents
+/plugin install ralph-orchestrator
 ```
 
-| Task Signal | MCP Server | Purpose |
-|-------------|------------|---------|
-| image, thumbnail, banner | `nano-banana`, `replicate` | Image generation |
-| DB, database, query | `postgres`, `sqlite` | Database access |
-| browser, scrape, crawl | `puppeteer`, `playwright` | Browser automation |
-| notion, docs | `notion` | Notion API |
-| GitHub API | `github` | GitHub operations |
-| external filesystem | `filesystem` | External file access |
+### RIPER 워크플로우
 
-**If MCP needed but not installed:**
+**언제 사용**: 체계적인 단계별 진행이 필요할 때
+
+**구조**:
 ```
-WebSearch: "Claude Code [domain] MCP server 2026"
+Research → Innovate → Plan → Execute → Review
+    │                                    │
+    └────────── 피드백 루프 ──────────────┘
+```
+
+### Full-stack 오케스트레이션
+
+**언제 사용**: 여러 전문 에이전트 조율이 필요할 때
+
+**구조**:
+```
+Phase 1: 설계 (architect, database-designer)
+    ↓
+Phase 2: 구현 (backend, frontend, database) [병렬]
+    ↓
+Phase 3: 테스트 (unit-tester, e2e-tester, security-auditor) [병렬]
+    ↓
+Phase 4: 배포 (deployment-engineer, performance-engineer)
 ```
 
 ---
 
-## Phase 4: Recommend Installation (if needed)
+## 핵심 의사결정 트리
 
+```
+사용자 프롬프트
+      │
+      ▼
+┌─────────────────┐
+│ Harness 필요?   │
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    ▼         ▼
+  [예]       [아니오]
+    │            │
+    ▼            ▼
+로컬에      복잡도 체크
+harness        │
+있나?     ┌────┴────┐
+    │     ▼         ▼
+┌───┴───┐ [복잡]   [단순/중간]
+▼       ▼    │         │
+[있음] [없음]  │         ▼
+  │      │    │    로컬 도구로
+  │      ▼    │    충분?
+  │  WebSearch│       │
+  │  + 설치   │   ┌───┴───┐
+  │  제안     │   ▼       ▼
+  │      │    │ [예]    [아니오]
+  ▼      ▼    │   │        │
+사용    설치   │   │    WebSearch
+방법    후     │   │    + 설치 제안
+안내    사용   │   ▼        │
+              │ 직접 도구   │
+              │ 또는 스킬   ▼
+              │   사용    설치 후
+              │          사용
+              ▼
+         /feature-dev
+         또는 harness
+```
+
+---
+
+## 실행 지침
+
+1. **Phase 1**: Bash로 로컬 도구 인벤토리 확인
+2. **Phase 2**: 프롬프트 분석 (복잡도, harness 필요성)
+3. **Phase 3**: 로컬 도구로 충분한지 판단
+4. **Phase 4**: 부족하면 WebSearch로 도구 탐색 → 설치 제안
+5. **Phase 5**: 최종 추천 및 사용법 안내
+6. **Phase 6**: Quick Action 제시 (복사 가능한 명령어 테이블)
+
+**중요**:
+- 도구 설치는 반드시 사용자 승인 후 진행 (Human-in-the-loop)
+- **반드시 마지막에 "🎯 지금 바로 실행" 섹션 포함** (사용자가 즉시 action 가능하도록)
+
+---
+
+## 예시: 복잡한 장기 작업
+
+**입력**:
+```
+entrypoint.sh 검토하고, 필요하면 하루 1번 갱신 구조로 리팩토링해줘.
+DeepSearch API로 대체 가능한지 검토하고 기존 패턴 참고해서 구현해.
+plan mode로 생각해봐.
+```
+
+**출력**:
 ```markdown
-## Recommended Installation
+## 프롬프트 분석 결과
 
-| Type | Name | Purpose | Install |
-|------|------|---------|---------|
-| Agent/Skill | [name] | [desc] | `/plugin marketplace add [source]` |
+### 1. 작업 분류
+- **주요 유형**: 기능 개발/리팩토링
+- **부가 유형**: 코드 탐색, 외부 문서 참조, 패턴 분석
+- **복잡도**: 복잡 (5+ 파일, 설계 필요)
 
-**Install now?** (yes/no)
+### 2. Harness 필요성
+- **필요 여부**: 선택적 (단일 기능이지만 다단계)
+- **이유**: 설계→구현→테스트 사이클이지만 1회성 작업
+- **추천 패턴**: 없음 (하지만 실패 시 Ralph 고려)
+
+### 3. 로컬 도구 현황
+- **설치됨**: feature-dev, full-stack-orchestration, comprehensive-review
+- **부족함**: 없음 (충분)
+
+### 4. 추천
+
+**최적 추천**: `/feature-dev`
+
+**이유**:
+- "plan mode" 요청 → 설계 우선 접근
+- 기존 패턴 분석 → 동일 패턴 구현 필요
+- 가이드된 흐름으로 중간 확인 가능
+
+**사용 방법**:
 ```
+/feature-dev
+
+입력할 프롬프트:
+entrypoint.sh의 종목 데이터 업데이트 로직을 검토하고
+DeepSearch API 기반 하루 1회 갱신 구조로 리팩토링해줘.
+참고 문서: /Users/aerok/.../02-company.md
+기존 deepsearch 호출 패턴과 동일하게 구현.
+```
+
+### 5. 대안
+1. **EnterPlanMode** - 더 자유로운 계획 수립 원할 때
+2. **Ralph + feature-dev** - 구현 후 자동 검증 루프 원할 때
 
 ---
 
-## Output Template
+## 🎯 지금 바로 실행
 
-```markdown
-## Analysis Result
+| 당신의 상황 | 복사해서 붙여넣기 |
+|------------|------------------|
+| 계획 먼저 보고 싶다 | `Plan Mode로 entrypoint.sh 리팩토링 계획 세워줘` |
+| 가이드된 개발 원한다 | `/feature-dev` 입력 후 위 프롬프트 사용 |
+| 바로 구현해줘 | `entrypoint.sh를 DeepSearch API로 리팩토링해줘` |
 
-### 1. Classification
-- **Type**: [development/review/exploration/...]
-- **Complexity**: [simple/medium/complex/long-running]
-
-### 2. Harness
-- **Required**: [yes/no] — **Pattern**: [Goal Loop/Pipeline/Parallel/Feedback/none]
-
-### 2.5. Plan Mode (if complexity >= medium)
-- **Recommended**: [yes/no]
-- **Reason**: [why plan mode helps or not needed]
-
-### 3. Agent Recommendation
-- **Source**: [built-in/local/marketplace]
-- **Agent**: [name] — **Reason**: [why]
-
-### 3.5. MCP Recommendation (if needed)
-- **MCP**: [server name] — **Purpose**: [why needed]
-
-### 4. Recommendation
-**Use**: [tool/skill/agent name]
-```
-[usage example]
+**→ 이 작업은 "계획 먼저"를 권장** (5+ 파일, 설계 필요)
 ```
 
-### 5. Installation (if needed)
-| Name | Install |
-|------|---------|
-| [x] | `/plugin marketplace add [source]` |
-```
-
----
-
-## Decision Flow
-
-1. **Check local inventory** (plugins, skills, agents, MCP)
-2. **Assess complexity** → Determine if harness needed
-3. **Check plan mode need** → Recommend `EnterPlanMode` if complex/uncertain
-4. **Select agent**: Local custom → Built-in → Marketplace search
-5. **Check MCP needs**: Image, DB, browser, APIs
-6. **Recommend tool/skill/MCP** with usage guide
-7. **Suggest installation** if needed (human-in-the-loop)
-
----
-
-## Examples
-
-### Example 1: Simple Task
-
-**Input**: `Fix the typo in README.md`
-
-**Output**:
-```markdown
-## Analysis Result
-### 1. Classification
-- **Type**: Bug fix — **Complexity**: Simple
-
-### 2. Harness
-- **Required**: No
-
-### 2.5. Plan Mode
-- **Recommended**: No — Simple single-file fix
-
-### 4. Recommendation
-**Use**: Direct tools (Read + Edit)
-```
-
-### Example 2: Complex Task with Plan Mode
-
-**Input**: `Refactor the authentication module to use JWT tokens`
-
-**Output**:
-```markdown
-## Analysis Result
-### 1. Classification
-- **Type**: Refactoring — **Complexity**: Complex
-
-### 2. Harness
-- **Required**: No (one-time refactoring)
-
-### 2.5. Plan Mode
-- **Recommended**: Yes
-- **Reason**: Multiple files affected, architectural decision (JWT implementation strategy)
-- **Suggest**: Run `EnterPlanMode` first to design the approach
-
-### 3. Agent Recommendation
-- **Source**: Built-in
-- **Agent**: `Plan` → then `general-purpose` for execution
-
-### 4. Recommendation
-**Step 1**: `EnterPlanMode` — Design JWT integration strategy
-**Step 2**: After plan approval, execute with `feature-dev` or direct tools
-```
-
-### Example 3: MCP + Multi-step Task
-
-**Input**: `Create a blog thumbnail and fetch recent posts from DB to write a marketing post`
-
-**Output**:
-```markdown
-## Analysis Result
-### 1. Classification
-- **Type**: Content creation — **Complexity**: Complex
-
-### 2. Harness
-- **Required**: No (one-time task)
-
-### 2.5. Plan Mode
-- **Recommended**: No — Clear sequential steps, no architectural decisions
-
-### 3. Agent Recommendation
-- **Agent**: `general-purpose` — Multi-step content task
-
-### 3.5. MCP Recommendation
-- **MCP**: `nano-banana` — Thumbnail generation | **Missing** ✗
-- **MCP**: `postgres` — DB query | **Installed** ✓
-
-### 4. Recommendation
-**Phase 1**: Fetch data via `postgres` MCP
-**Phase 2**: Generate thumbnail via `nano-banana` MCP
-**Phase 3**: Write post with `general-purpose` agent
-
-### 5. Installation
-| MCP | Install |
-|-----|---------|
-| nano-banana | Add to `~/.claude/mcp.json` |
-
-**Install now?** (yes/no)
-```
-
----
-
-## Fallback (Built-in only)
-
-| Need | Use |
-|------|-----|
-| Exploration | `Task` + `Explore` |
-| Planning | `Task` + `Plan` |
-| Code review | `Task` + `general-purpose` |
-| Claude Code help | `Task` + `claude-code-guide` |
-| Commands | `Task` + `Bash` |
-
----
-
-Analyze prompt: $ARGUMENTS
+분석할 프롬프트: $ARGUMENTS
