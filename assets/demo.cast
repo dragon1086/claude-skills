@@ -1,7 +1,7 @@
 {"version": 2, "width": 80, "height": 24, "timestamp": 1706745600, "env": {"SHELL": "/bin/bash", "TERM": "xterm-256color"}}
 [0.0, "o", "\u001b[0;90m$ claude\u001b[0m\r\n"]
 [0.5, "o", "\r\n"]
-[1.0, "o", "\u001b[0;36mYou:\u001b[0m /d1086:ta Refactor auth module to use JWT tokens\r\n"]
+[1.0, "o", "\u001b[0;36mYou:\u001b[0m Analyze this with tool-advisor: Refactor auth module to use JWT\r\n"]
 [1.8, "o", "\r\n"]
 [2.0, "o", "\u001b[0;90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\r\n"]
 [2.3, "o", "🔍 Checking local inventory...\r\n"]

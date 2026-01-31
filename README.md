@@ -13,25 +13,29 @@ Tool Advisor analyzes your prompt and recommends the optimal combination of tool
 /plugin marketplace add dragon1086/claude-skills
 
 # Install globally (default)
-/plugin install tool-advisor@d1086
+/plugin install tool-advisor@adv
 
 # Or install for current project only
-/plugin install tool-advisor@d1086 --scope project
+/plugin install tool-advisor@adv --scope project
 ```
 
 ## Usage
 
-### Slash Command
-```bash
-/d1086:ta "your task description"
-/d1086:tool-advisor "your task description"
+Just ask naturally:
+
+```
+"Analyze this task with tool-advisor: refactor the auth module"
+"What's the best approach for implementing user authentication?"
+"tool-advisor, how should I tackle this database migration?"
 ```
 
-### Natural Language
-You can also invoke it naturally in conversation:
-```
-"Use tool-advisor to analyze this task: refactor the auth module"
-"tool-advisor 스킬로 이 작업 분석해줘"
+The skill activates when you mention **tool-advisor**, **ta**, or ask for tool recommendations.
+
+### Slash Commands
+
+For quick access:
+```bash
+/adv:ta "your task description"
 ```
 
 ## What It Does
@@ -39,16 +43,16 @@ You can also invoke it naturally in conversation:
 ```
 Your Prompt
     ↓
-┌─────────────────────────────┐
-│      Tool Advisor           │
-├─────────────────────────────┤
-│ 1. Check local inventory    │
-│ 2. Assess complexity        │
-│ 3. Recommend plan mode?     │
-│ 4. Select agents (3-tier)   │
-│ 5. Check MCP needs          │
-│ 6. Suggest installation     │
-└─────────────────────────────┘
+┌─────────────────────────────────┐
+│        Tool Advisor             │
+├─────────────────────────────────┤
+│ 1. Check local inventory        │
+│ 2. Assess complexity            │
+│ 3. Recommend plan mode?         │
+│ 4. Select agents (3-tier)       │
+│ 5. Check MCP needs              │
+│ 6. Suggest installation         │
+└─────────────────────────────────┘
     ↓
 Optimal Recommendation
 ```
@@ -67,7 +71,7 @@ Optimal Recommendation
 
 **Input:**
 ```
-/d1086:ta Refactor auth module to use JWT tokens
+Analyze this with tool-advisor: Refactor auth module to use JWT tokens
 ```
 
 **Output:**
@@ -93,17 +97,10 @@ Step 2: Execute with feature-dev after approval
 
 | Command | Description |
 |---------|-------------|
-| `/d1086:ta` | Short form |
-| `/d1086:tool-advisor` | Full name |
-| `/d1086:recommend` | Alias |
-| `/d1086:advisor` | Alias |
-
-## Installation Scopes
-
-| Scope | Command | Location |
-|-------|---------|----------|
-| Global (default) | `/plugin install tool-advisor@d1086` | `~/.claude/` |
-| Project | `/plugin install tool-advisor@d1086 --scope project` | `.claude/` |
+| `/adv:ta` | Short form |
+| `/adv:tool-advisor` | Full name |
+| `/adv:recommend` | Alias |
+| `/adv:advisor` | Alias |
 
 ## Requirements
 
@@ -117,7 +114,3 @@ Step 2: Execute with feature-dev after approval
 ## License
 
 MIT © 2026 dragon1086
-
----
-
-Sources: [Claude Code Plugins Documentation](https://code.claude.com/docs/en/plugins)

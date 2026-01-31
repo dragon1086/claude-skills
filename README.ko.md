@@ -13,25 +13,29 @@ Tool Advisor는 프롬프트를 분석하여 최적의 도구, 에이전트, MCP
 /plugin marketplace add dragon1086/claude-skills
 
 # 전역 설치 (기본값)
-/plugin install tool-advisor@d1086
+/plugin install tool-advisor@adv
 
 # 또는 현재 프로젝트에만 설치
-/plugin install tool-advisor@d1086 --scope project
+/plugin install tool-advisor@adv --scope project
 ```
 
 ## 사용법
 
-### 슬래시 커맨드
-```bash
-/d1086:ta "작업 설명"
-/d1086:tool-advisor "작업 설명"
+자연스럽게 대화하듯 요청하세요:
+
+```
+"tool-advisor로 이 작업 분석해줘: 인증 모듈 리팩토링"
+"사용자 인증 구현하려면 어떤 방법이 좋을까?"
+"ta 스킬 써서 이 데이터베이스 마이그레이션 어떻게 할지 추천해줘"
 ```
 
-### 자연어 호출
-대화 중에 자연스럽게 호출할 수도 있습니다:
-```
-"tool-advisor 스킬로 이 작업 분석해줘"
-"tool-advisor를 써서 최적 도구 추천해줘"
+**tool-advisor**, **ta** 등을 언급하거나 도구 추천을 요청하면 스킬이 활성화됩니다.
+
+### 슬래시 커맨드
+
+빠른 접근:
+```bash
+/adv:ta "작업 설명"
 ```
 
 ## 동작 방식
@@ -67,7 +71,7 @@ Tool Advisor는 프롬프트를 분석하여 최적의 도구, 에이전트, MCP
 
 **입력:**
 ```
-/d1086:ta 인증 모듈을 JWT로 리팩토링해줘
+tool-advisor로 분석해줘: 인증 모듈을 JWT로 리팩토링
 ```
 
 **출력:**
@@ -93,17 +97,10 @@ Step 2: 승인 후 feature-dev로 실행
 
 | 명령어 | 설명 |
 |--------|------|
-| `/d1086:ta` | 짧은 형태 |
-| `/d1086:tool-advisor` | 전체 이름 |
-| `/d1086:recommend` | 별칭 |
-| `/d1086:advisor` | 별칭 |
-
-## 설치 범위
-
-| 범위 | 명령어 | 위치 |
-|------|--------|------|
-| 전역 (기본값) | `/plugin install tool-advisor@d1086` | `~/.claude/` |
-| 프로젝트 | `/plugin install tool-advisor@d1086 --scope project` | `.claude/` |
+| `/adv:ta` | 짧은 형태 |
+| `/adv:tool-advisor` | 전체 이름 |
+| `/adv:recommend` | 별칭 |
+| `/adv:advisor` | 별칭 |
 
 ## 요구 사항
 

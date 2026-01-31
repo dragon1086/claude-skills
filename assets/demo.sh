@@ -17,7 +17,7 @@ echo -e "${GRAY}$ claude${NC}"
 echo ""
 sleep 0.5
 
-echo -e "${CYAN}You:${NC} /d1086:ta Refactor auth module to use JWT tokens"
+echo -e "${CYAN}You:${NC} Analyze this with tool-advisor: Refactor auth module to use JWT"
 echo ""
 sleep 0.8
 
