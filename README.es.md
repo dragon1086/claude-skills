@@ -1,6 +1,6 @@
 # 🧭 Tool Advisor
 
-[English](./README.md) | [한국어](./README.ko.md) | [日本語](./README.ja.md) | [中文](./README.zh-CN.md) | **Español**
+[English](./README.md) | [한국어](./README.ko.md) | [日本語](./README.ja.md) | [中文](./README.zh-CN.md) | **Español** | [Português](./README.pt-BR.md) | [Русский](./README.ru.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md)
 
 **Deja de adivinar qué herramienta usar. Deja que Claude Code decida.**
 
