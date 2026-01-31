@@ -49,9 +49,9 @@ ls ~/.claude/agents/ 2>/dev/null || echo "No custom agents"
 
 ### Phase 1.5: Analyze Subagent Requirements
 
-Claude Code's `Task` tool can delegate work to specialized subagents. Match the task type to the optimal subagent:
+Claude Code's `Task` tool can delegate work to specialized subagents. Check available agents in this order:
 
-**Built-in Subagent Types:**
+#### Step 1: Built-in Subagents (Always Available)
 
 | subagent_type | Purpose | Best For |
 |---------------|---------|----------|
@@ -61,20 +61,63 @@ Claude Code's `Task` tool can delegate work to specialized subagents. Match the 
 | `claude-code-guide` | Claude Code usage help | "How do I configure MCP?", "What hooks are available?" |
 | `general-purpose` | Multi-step research | Complex investigations, code search across multiple locations |
 
+#### Step 2: Scan Local Custom Agents
+
+```bash
+# Check installed custom agents with their descriptions
+for agent in ~/.claude/agents/*.md; do
+  if [ -f "$agent" ]; then
+    echo "=== $(basename "$agent" .md) ==="
+    head -20 "$agent" | grep -E "^(name|description|#)" | head -5
+  fi
+done
+```
+
+Custom agents may provide specialized capabilities beyond built-ins:
+- Domain-specific expertise (e.g., `security-reviewer`, `api-designer`)
+- Project-specific workflows (e.g., `our-deploy-agent`)
+- Enhanced versions of built-ins (e.g., `deep-code-review`)
+
+#### Step 3: Search Marketplace (if no suitable agent found)
+
+```
+WebSearch: "Claude Code agent [task-type] 2026"
+WebSearch: "Claude Code subagent [domain] plugin"
+```
+
 **Subagent Selection Matrix:**
 
-| Task Signal | Recommended Subagent | Thoroughness |
-|-------------|---------------------|--------------|
-| "어디서", "where", "find", "구조" | `Explore` | quick → very thorough |
-| "계획", "plan", "design", "설계" | `Plan` | - |
-| "git", "build", "npm", "docker" | `Bash` | - |
-| "Claude Code", "MCP", "hook", "설정" | `claude-code-guide` | - |
-| Complex multi-file search | `general-purpose` | - |
+| Task Signal | Check Order |
+|-------------|-------------|
+| "어디서", "where", "find", "구조" | Local explorer agent → `Explore` |
+| "계획", "plan", "design", "설계" | Local planner agent → `Plan` |
+| "review", "검토", "리뷰" | Local reviewer agent → `general-purpose` |
+| "security", "보안", "취약점" | Local security agent → marketplace search → `Explore` |
+| "git", "build", "npm", "docker" | `Bash` (built-in sufficient) |
+| "Claude Code", "MCP", "hook" | `claude-code-guide` (built-in sufficient) |
 
-**Thoroughness Levels for Explore:**
+**Thoroughness Levels (for Explore):**
 - `quick`: Basic file/pattern search (1-2 locations)
 - `medium`: Moderate exploration (multiple files)
 - `very thorough`: Comprehensive analysis across entire codebase
+
+#### Step 4: Recommend Agent Installation (if needed)
+
+If a specialized agent would help but isn't installed:
+
+```markdown
+## Recommended Agent Installation
+
+No suitable agent found locally for [task].
+
+### Available from Marketplace
+
+| Agent | Purpose | Install |
+|-------|---------|---------|
+| [agent-name] | [description] | `/plugin marketplace add [source]` then install |
+
+**Would you like to install?** (yes/no)
+```
 
 ### Phase 2: Assess Task Complexity
 
@@ -156,9 +199,11 @@ Prompt: `$ARGUMENTS`
 - **Missing**: [tools needed but not installed]
 
 ### 3.5. Subagent Recommendation
-- **Recommended subagent**: [Explore/Plan/Bash/claude-code-guide/general-purpose/none]
+- **Source**: [built-in / local custom / marketplace]
+- **Recommended subagent**: [agent name or type]
 - **Reason**: [why this subagent fits the task]
 - **Thoroughness**: [quick/medium/very thorough] (for Explore only)
+- **Installation needed**: [yes/no] (if marketplace)
 
 ### 4. Recommendation
 
@@ -210,9 +255,11 @@ These tools are always available in Claude Code:
 | `WebSearch` | Search the internet | `WebSearch: React 19 features` |
 | `WebFetch` | Fetch URL content | `WebFetch: https://...` |
 
-## Built-in Subagent Reference
+## Subagent Reference
 
-Use the `Task` tool with `subagent_type` parameter to delegate work:
+Use the `Task` tool with `subagent_type` parameter to delegate work. Agents come from three sources:
+
+### 1. Built-in Subagents (Always Available)
 
 | Subagent | Description | Example Prompt |
 |----------|-------------|----------------|
@@ -222,12 +269,45 @@ Use the `Task` tool with `subagent_type` parameter to delegate work:
 | `claude-code-guide` | Claude Code feature expert | "How do I set up MCP servers for database access?" |
 | `general-purpose` | Complex multi-step research and code search | "Investigate how errors are handled across all service layers" |
 
+### 2. Local Custom Agents (`~/.claude/agents/`)
+
+Custom agents installed locally. Check with:
+```bash
+ls ~/.claude/agents/*.md 2>/dev/null
+```
+
+Common custom agent types:
+| Agent Type | Purpose |
+|------------|---------|
+| `security-reviewer` | Security vulnerability analysis |
+| `api-designer` | API design and documentation |
+| `test-generator` | Automated test creation |
+| `refactor-expert` | Code refactoring guidance |
+
+### 3. Marketplace Agents
+
+Search for specialized agents:
+```
+WebSearch: "Claude Code [domain] agent plugin 2026"
+```
+
+Popular marketplace agents:
+| Agent | Purpose | Source |
+|-------|---------|--------|
+| `deep-code-review` | Comprehensive code review | github.com/... |
+| `architecture-advisor` | System design guidance | github.com/... |
+
 **Usage Example:**
 ```
 Task: Explore the authentication flow in this codebase
 subagent_type: Explore
 thoroughness: very thorough
 ```
+
+**Agent Selection Priority:**
+1. **Local custom agent** - Best fit if domain-specific agent exists
+2. **Built-in subagent** - Reliable default for general tasks
+3. **Marketplace agent** - Search and install for specialized needs
 
 **When to Use Subagents vs Direct Tools:**
 
@@ -238,6 +318,7 @@ thoroughness: very thorough
 | Open-ended exploration ("how does X work?") | `Task` with `Explore` |
 | Multi-file investigation | `Task` with `Explore` or `general-purpose` |
 | Need implementation plan | `Task` with `Plan` |
+| Domain-specific review | Local custom agent or marketplace |
 
 ---
 
@@ -434,7 +515,7 @@ done
 ```
 ```
 
-### Example 4: Codebase Exploration (Subagent Focus)
+### Example 4: Codebase Exploration (Subagent Search Flow)
 
 **Input**:
 ```
@@ -458,9 +539,15 @@ done
 - **Missing**: None needed
 
 ### 3.5. Subagent Recommendation
+- **Source**: Built-in (no local `error-analyzer` agent found)
 - **Recommended subagent**: `Explore`
 - **Reason**: Open-ended codebase question requiring multi-file search
 - **Thoroughness**: `very thorough` (error handling spans many files)
+- **Installation needed**: No
+
+**Agent search process**:
+1. ✗ Local agents: No `error-analyzer` or similar in `~/.claude/agents/`
+2. ✓ Built-in: `Explore` subagent fits this exploration task
 
 ### 4. Recommendation
 
@@ -514,6 +601,79 @@ Task: Explain how to configure MCP servers in Claude Code.
 Include setup steps, configuration file location, and examples.
 
 subagent_type: claude-code-guide
+```
+```
+
+### Example 6: Security Review (Marketplace Search Flow)
+
+**Input**:
+```
+이 코드에 보안 취약점이 있는지 검토해줘
+```
+
+**Output**:
+```markdown
+## Prompt Analysis Result
+
+### 1. Task Classification
+- **Primary type**: Security review
+- **Complexity**: Complex (requires domain expertise)
+
+### 2. Harness Necessity
+- **Required**: No
+- **Reason**: One-time review, not iterative
+
+### 3. Local Tool Status
+- **Available**: Built-in tools
+- **Missing**: Security-specialized agent
+
+### 3.5. Subagent Recommendation
+- **Source**: Marketplace (specialized agent recommended)
+- **Recommended subagent**: `security-reviewer` (if available)
+- **Reason**: Security review requires domain expertise beyond general exploration
+- **Installation needed**: Yes
+
+**Agent search process**:
+1. ✗ Local agents: No `security-reviewer` in `~/.claude/agents/`
+2. ✗ Built-in: No security-specialized subagent
+3. → Marketplace search: "Claude Code security review agent 2026"
+
+### 4. Recommendation
+
+#### Option A: Install specialized agent (recommended)
+
+**Search results**:
+| Agent | Purpose | Source |
+|-------|---------|--------|
+| `security-scanner` | OWASP Top 10 vulnerability detection | github.com/example/security-scanner |
+| `code-auditor` | Security-focused code review | github.com/example/code-auditor |
+
+**Install**:
+```
+/plugin marketplace add github.com/example/security-scanner
+/plugin install security-scanner
+```
+
+**Would you like to install?** (yes/no)
+
+#### Option B: Use built-in fallback
+
+If you prefer not to install:
+
+**Fallback choice**: `Task` with `subagent_type=Explore`
+
+**Usage**:
+```
+Task: Review this codebase for security vulnerabilities.
+Check for: SQL injection, XSS, CSRF, authentication issues,
+sensitive data exposure, and insecure dependencies.
+
+subagent_type: Explore
+thoroughness: very thorough
+```
+
+**Note**: Built-in Explore can find patterns but lacks specialized security knowledge.
+A dedicated security agent would provide deeper analysis.
 ```
 ```
 
