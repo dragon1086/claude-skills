@@ -47,6 +47,35 @@ ls ~/.claude/skills/ 2>/dev/null || echo "No custom skills"
 ls ~/.claude/agents/ 2>/dev/null || echo "No custom agents"
 ```
 
+### Phase 1.5: Analyze Subagent Requirements
+
+Claude Code's `Task` tool can delegate work to specialized subagents. Match the task type to the optimal subagent:
+
+**Built-in Subagent Types:**
+
+| subagent_type | Purpose | Best For |
+|---------------|---------|----------|
+| `Explore` | Fast codebase exploration | "Where is X handled?", "Show me the structure", pattern search |
+| `Plan` | Implementation strategy design | Complex features, architecture decisions, multi-file changes |
+| `Bash` | Command execution specialist | Git operations, builds, system commands |
+| `claude-code-guide` | Claude Code usage help | "How do I configure MCP?", "What hooks are available?" |
+| `general-purpose` | Multi-step research | Complex investigations, code search across multiple locations |
+
+**Subagent Selection Matrix:**
+
+| Task Signal | Recommended Subagent | Thoroughness |
+|-------------|---------------------|--------------|
+| "어디서", "where", "find", "구조" | `Explore` | quick → very thorough |
+| "계획", "plan", "design", "설계" | `Plan` | - |
+| "git", "build", "npm", "docker" | `Bash` | - |
+| "Claude Code", "MCP", "hook", "설정" | `claude-code-guide` | - |
+| Complex multi-file search | `general-purpose` | - |
+
+**Thoroughness Levels for Explore:**
+- `quick`: Basic file/pattern search (1-2 locations)
+- `medium`: Moderate exploration (multiple files)
+- `very thorough`: Comprehensive analysis across entire codebase
+
 ### Phase 2: Assess Task Complexity
 
 | Complexity | Characteristics | Recommended Approach | Harness Needed |
@@ -126,6 +155,11 @@ Prompt: `$ARGUMENTS`
 - **Available**: [list of usable tools]
 - **Missing**: [tools needed but not installed]
 
+### 3.5. Subagent Recommendation
+- **Recommended subagent**: [Explore/Plan/Bash/claude-code-guide/general-purpose/none]
+- **Reason**: [why this subagent fits the task]
+- **Thoroughness**: [quick/medium/very thorough] (for Explore only)
+
 ### 4. Recommendation
 
 #### A. If local tools are sufficient
@@ -175,6 +209,35 @@ These tools are always available in Claude Code:
 | `Task` | Delegate to subagent | `Task: explore codebase` |
 | `WebSearch` | Search the internet | `WebSearch: React 19 features` |
 | `WebFetch` | Fetch URL content | `WebFetch: https://...` |
+
+## Built-in Subagent Reference
+
+Use the `Task` tool with `subagent_type` parameter to delegate work:
+
+| Subagent | Description | Example Prompt |
+|----------|-------------|----------------|
+| `Explore` | Fast codebase exploration, file patterns, keyword search | "Find all API endpoints and explain the routing structure" |
+| `Plan` | Software architect for implementation planning | "Design the implementation strategy for adding OAuth support" |
+| `Bash` | Shell command execution specialist | "Run the test suite and report results" |
+| `claude-code-guide` | Claude Code feature expert | "How do I set up MCP servers for database access?" |
+| `general-purpose` | Complex multi-step research and code search | "Investigate how errors are handled across all service layers" |
+
+**Usage Example:**
+```
+Task: Explore the authentication flow in this codebase
+subagent_type: Explore
+thoroughness: very thorough
+```
+
+**When to Use Subagents vs Direct Tools:**
+
+| Scenario | Use |
+|----------|-----|
+| Read a specific known file | `Read` tool directly |
+| Search for a specific class/function | `Glob` or `Grep` directly |
+| Open-ended exploration ("how does X work?") | `Task` with `Explore` |
+| Multi-file investigation | `Task` with `Explore` or `general-purpose` |
+| Need implementation plan | `Task` with `Plan` |
 
 ---
 
@@ -371,6 +434,89 @@ done
 ```
 ```
 
+### Example 4: Codebase Exploration (Subagent Focus)
+
+**Input**:
+```
+이 코드베이스에서 에러 처리가 어떻게 되어 있어?
+```
+
+**Output**:
+```markdown
+## Prompt Analysis Result
+
+### 1. Task Classification
+- **Primary type**: Codebase exploration
+- **Complexity**: Medium (multiple files, pattern search)
+
+### 2. Harness Necessity
+- **Required**: No
+- **Reason**: One-time exploration, not iterative
+
+### 3. Local Tool Status
+- **Available**: Built-in tools
+- **Missing**: None needed
+
+### 3.5. Subagent Recommendation
+- **Recommended subagent**: `Explore`
+- **Reason**: Open-ended codebase question requiring multi-file search
+- **Thoroughness**: `very thorough` (error handling spans many files)
+
+### 4. Recommendation
+
+**Optimal choice**: `Task` with `subagent_type=Explore`
+
+**Usage**:
+```
+Task: Find and explain how errors are handled in this codebase.
+Look for try-catch patterns, error middleware, error boundaries,
+and custom error classes.
+
+subagent_type: Explore
+thoroughness: very thorough
+```
+
+**Why not direct tools?**
+- `Grep` alone would find patterns but not explain context
+- Multiple search rounds needed → Explore agent handles this autonomously
+- Open-ended question benefits from agent's reasoning
+```
+
+### Example 5: Claude Code Help (Subagent Focus)
+
+**Input**:
+```
+MCP 서버 설정은 어떻게 해?
+```
+
+**Output**:
+```markdown
+## Prompt Analysis Result
+
+### 1. Task Classification
+- **Primary type**: Claude Code usage question
+- **Complexity**: Simple (documentation lookup)
+
+### 2. Harness Necessity
+- **Required**: No
+
+### 3.5. Subagent Recommendation
+- **Recommended subagent**: `claude-code-guide`
+- **Reason**: Question about Claude Code feature (MCP servers)
+
+### 4. Recommendation
+
+**Optimal choice**: `Task` with `subagent_type=claude-code-guide`
+
+**Usage**:
+```
+Task: Explain how to configure MCP servers in Claude Code.
+Include setup steps, configuration file location, and examples.
+
+subagent_type: claude-code-guide
+```
+```
+
 ---
 
 ## Fallback Recommendations
@@ -381,9 +527,12 @@ If specialized tools are unavailable, use these built-in approaches:
 |------|-------------------|
 | Iterative development | Shell script loop + Claude analysis |
 | Multi-agent coordination | Sequential prompts with shared context |
-| Complex planning | Markdown file to track state/progress |
-| Code review | Use `Task` with `code-reviewer` agent type |
-| Codebase exploration | Use `Task` with `Explore` agent type |
+| Complex planning | `Task` with `Plan` subagent or markdown file |
+| Code review | `Task` with `general-purpose` subagent |
+| Codebase exploration | `Task` with `Explore` subagent |
+| Implementation strategy | `Task` with `Plan` subagent |
+| Claude Code questions | `Task` with `claude-code-guide` subagent |
+| Git/build operations | `Task` with `Bash` subagent |
 
 ---
 
