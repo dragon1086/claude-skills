@@ -9,14 +9,29 @@ Tool Advisor는 프롬프트를 분석하여 최적의 도구, 에이전트, MCP
 ## 설치
 
 ```bash
+# 마켓플레이스 추가 (최초 1회)
 /plugin marketplace add dragon1086/claude-skills
-/plugin install tool-advisor@dragon1086-skills
+
+# 전역 설치 (기본값)
+/plugin install tool-advisor@d1086
+
+# 또는 현재 프로젝트에만 설치
+/plugin install tool-advisor@d1086 --scope project
 ```
 
 ## 사용법
 
+### 슬래시 커맨드
 ```bash
-/ta "작업 설명"
+/d1086:ta "작업 설명"
+/d1086:tool-advisor "작업 설명"
+```
+
+### 자연어 호출
+대화 중에 자연스럽게 호출할 수도 있습니다:
+```
+"tool-advisor 스킬로 이 작업 분석해줘"
+"tool-advisor를 써서 최적 도구 추천해줘"
 ```
 
 ## 동작 방식
@@ -52,7 +67,7 @@ Tool Advisor는 프롬프트를 분석하여 최적의 도구, 에이전트, MCP
 
 **입력:**
 ```
-/ta 인증 모듈을 JWT로 리팩토링해줘
+/d1086:ta 인증 모듈을 JWT로 리팩토링해줘
 ```
 
 **출력:**
@@ -74,11 +89,21 @@ Step 1: EnterPlanMode — JWT 전략 설계
 Step 2: 승인 후 feature-dev로 실행
 ```
 
-## 단축 명령어
+## 명령어 레퍼런스
 
-- `/ta` — 짧은 형태
-- `/recommend`
-- `/advisor`
+| 명령어 | 설명 |
+|--------|------|
+| `/d1086:ta` | 짧은 형태 |
+| `/d1086:tool-advisor` | 전체 이름 |
+| `/d1086:recommend` | 별칭 |
+| `/d1086:advisor` | 별칭 |
+
+## 설치 범위
+
+| 범위 | 명령어 | 위치 |
+|------|--------|------|
+| 전역 (기본값) | `/plugin install tool-advisor@d1086` | `~/.claude/` |
+| 프로젝트 | `/plugin install tool-advisor@d1086 --scope project` | `.claude/` |
 
 ## 요구 사항
 

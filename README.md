@@ -9,14 +9,29 @@ Tool Advisor analyzes your prompt and recommends the optimal combination of tool
 ## Install
 
 ```bash
+# Add marketplace (one-time)
 /plugin marketplace add dragon1086/claude-skills
-/plugin install tool-advisor@dragon1086-skills
+
+# Install globally (default)
+/plugin install tool-advisor@d1086
+
+# Or install for current project only
+/plugin install tool-advisor@d1086 --scope project
 ```
 
 ## Usage
 
+### Slash Command
 ```bash
-/ta "your task description"
+/d1086:ta "your task description"
+/d1086:tool-advisor "your task description"
+```
+
+### Natural Language
+You can also invoke it naturally in conversation:
+```
+"Use tool-advisor to analyze this task: refactor the auth module"
+"tool-advisor 스킬로 이 작업 분석해줘"
 ```
 
 ## What It Does
@@ -52,7 +67,7 @@ Optimal Recommendation
 
 **Input:**
 ```
-/ta Refactor auth module to use JWT tokens
+/d1086:ta Refactor auth module to use JWT tokens
 ```
 
 **Output:**
@@ -74,11 +89,21 @@ Step 1: EnterPlanMode — Design JWT strategy
 Step 2: Execute with feature-dev after approval
 ```
 
-## Aliases
+## Command Reference
 
-- `/ta` — short form
-- `/recommend`
-- `/advisor`
+| Command | Description |
+|---------|-------------|
+| `/d1086:ta` | Short form |
+| `/d1086:tool-advisor` | Full name |
+| `/d1086:recommend` | Alias |
+| `/d1086:advisor` | Alias |
+
+## Installation Scopes
+
+| Scope | Command | Location |
+|-------|---------|----------|
+| Global (default) | `/plugin install tool-advisor@d1086` | `~/.claude/` |
+| Project | `/plugin install tool-advisor@d1086 --scope project` | `.claude/` |
 
 ## Requirements
 
@@ -92,3 +117,7 @@ Step 2: Execute with feature-dev after approval
 ## License
 
 MIT © 2026 dragon1086
+
+---
+
+Sources: [Claude Code Plugins Documentation](https://code.claude.com/docs/en/plugins)
