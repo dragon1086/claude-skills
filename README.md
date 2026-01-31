@@ -6,7 +6,7 @@ You've installed dozens of plugins, skills, and agents in Claude Code.
 But every time you start a new task, the same question hits:
 *"Which one is the right tool for THIS job?"*
 
-**Tool Advisor analyzes your prompt and recommends the optimal tool automatically.**
+**Tool Advisor analyzes your prompt and recommends the optimal tool, skill, agent, and orchestration pattern — then Claude Code executes it for you.**
 
 ![Tool Advisor Demo](./assets/demo.gif)
 
@@ -21,72 +21,138 @@ That's it. Two commands. You're ready.
 
 ---
 
+## 🚀 What's New in v1.1
+
+- **3-Tier Agent Search**: Built-in → Local → Marketplace
+- **Multi-Agent Orchestration**: Recommends agent combinations for complex tasks
+- **Token Efficient**: ~1,500 tokens (70% reduction from v1.0)
+
+---
+
 ## 😫 Before vs 😊 After
 
 | Before Tool Advisor | After Tool Advisor |
 |---------------------|-------------------|
-| "I need to refactor auth... should I use `/feature-dev`? Or just `Edit`? Maybe there's a review skill?" | `/tool-advisor "refactor auth module"` → "Use `/feature-dev` for this multi-file refactoring task" |
-| Scroll through `/help` trying to remember what each tool does | Get instant, context-aware recommendations |
-| Install plugins you never end up using | Only install what you actually need |
-| Complex tasks fail because you picked the wrong approach | Harness patterns suggested for iterative work |
+| "Should I use `Explore` or `Grep`?" | Instant recommendation with reasoning |
+| "How do I set up a test-until-pass loop?" | Harness pattern auto-suggested |
+| "Is there a security review agent?" | 3-tier search finds it (local or marketplace) |
+| "How do I coordinate multiple agents?" | Orchestration pattern + Claude Code executes |
 
 ---
 
-## ✨ What It Does
+## ✨ Features
 
-### 1. 🔍 Analyzes Your Task
-Understands complexity: Is this a quick fix or a multi-phase project?
+### 1. 🔍 Smart Task Analysis
+Classifies complexity: Simple → Medium → Complex → Long-running
 
-### 2. 📦 Checks Your Inventory
-Scans your installed plugins, skills, and agents — recommends from what you have.
+### 2. 🤖 3-Tier Agent Search
+```
+Tier 1: Built-in (Explore, Plan, Bash, claude-code-guide, general-purpose)
+    ↓
+Tier 2: Local Custom (~/.claude/agents/)
+    ↓
+Tier 3: Marketplace Search (if needed)
+```
 
-### 3. 🎯 Recommends the Best Fit
-Not just "use this tool" — explains *why* it's the right choice.
+### 3. 🔄 Harness Pattern Recommendation
+- **Goal Loop**: "테스트 통과할 때까지 반복"
+- **Pipeline**: "설계 → 구현 → 검증"
+- **Parallel**: "백엔드와 프론트 동시에"
+- **Feedback**: "품질 기준 충족까지"
 
-### 4. 🔄 Suggests Patterns for Complex Work
-Need to loop until tests pass? It recommends harness patterns for autonomous iteration.
+### 4. 🎯 Multi-Agent Orchestration
+Recommends agent combinations → You accept → **Claude Code executes everything automatically**
 
-### 5. 🛒 Finds Missing Tools
-Don't have the right tool? It searches and suggests installation — with your approval.
+```
+Tool Advisor: "Use Explore + Plan + Goal Loop"
+You: "해줘"
+Claude Code: (executes the entire workflow)
+```
+
+### 5. 🛒 Marketplace Integration
+Missing the right tool? Searches and suggests installation — with your approval.
 
 ---
 
-## 📊 Example
+## 📊 Examples
 
-**Your prompt:**
+### Simple Task
 ```
-Review auth.js and refactor to JWT. Add tests. Use plan mode.
+/ta Fix the typo in README.md
+```
+→ **Use**: Direct tools (Read + Edit)
+
+### Complex + Marketplace Search
+```
+/ta 보안 취약점 검토하고 수정해서 테스트 통과할 때까지 반복해줘
+```
+→ **Output**:
+```markdown
+## Analysis Result
+
+### 1. Classification
+- Type: Security review + Bug fix
+- Complexity: Long-running
+
+### 2. Harness
+- Required: Yes — Pattern: Goal Loop
+
+### 3. Agent Recommendation
+- Source: Marketplace (no local security agent)
+- Agent: security-reviewer
+- Search: "Claude Code security review agent 2026"
+
+### 5. Installation
+| Name | Install |
+|------|---------|
+| security-scanner | `/plugin marketplace add github.com/...` |
+
+Install now? (yes/no)
+
+Fallback: Task + Explore + manual review
 ```
 
-**Tool Advisor output:**
+**You**: "설치하고 실행해"
+**Claude Code**: *(installs, scans, fixes, tests, done!)*
+
+---
+
+## 🎮 How It Works
+
 ```
-## Prompt Analysis Result
-
-### 1. Task Classification
-- Primary type: Feature development/refactoring
-- Complexity: Complex (5+ files, design needed)
-
-### 2. Harness Necessity
-- Required: No (multi-phase but one-time)
-- Recommended pattern: None
-
-### 3. Local Tool Status
-- Available: feature-dev, code-review, comprehensive-review
-- Missing: None
-
-### 4. Recommendation
-
-**Optimal choice**: `/feature-dev`
-
-**Why**:
-- "plan mode" requested → design-first approach fits
-- Multi-file changes → guided workflow prevents mistakes
-- Test requirement → feature-dev includes verification phase
-
-**Usage**:
-/feature-dev
-> Refactor auth.js to use JWT tokens, add unit tests
+┌─────────────────┐
+│  Your Prompt    │
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│  Tool Advisor   │  ← Analyzes & Recommends
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│  You: "해줘"    │  ← Accept
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│  Claude Code    │  ← Executes Everything
+│  (Auto-pilot)   │
+└─────────────────┘
 ```
+
+**Tool Advisor = Navigation**
+**Claude Code = Self-driving car**
+
+You just say where to go. It drives.
+
+---
+
+## 💰 Token Efficient
+
+| Version | Lines | Tokens |
+|---------|-------|--------|
+| v1.0 | 699 | ~5,500 |
+| v1.1 | 207 | ~1,500 |
+
+**70% reduction** — No billing surprises.
 
 ---
 
@@ -95,7 +161,7 @@ Review auth.js and refactor to JWT. Add tests. Use plan mode.
 <details>
 <summary><strong>Q: Does it work if I have no plugins installed?</strong></summary>
 
-Yes! It recommends built-in tools (Read, Edit, Bash, Grep, Glob, Task) and suggests plugins to install if needed.
+Yes! It recommends built-in tools and subagents first, then suggests marketplace plugins only if needed.
 </details>
 
 <details>
@@ -105,22 +171,28 @@ Never. All installations require your explicit approval (Human-in-the-loop).
 </details>
 
 <details>
-<summary><strong>Q: What's a "harness pattern"?</strong></summary>
+<summary><strong>Q: What's multi-agent orchestration?</strong></summary>
 
-An orchestration loop for tasks like "keep running tests until they pass." Tool Advisor detects when you need one and explains how to set it up.
+Tool Advisor recommends combinations like "Explore → Plan → Goal Loop". When you accept, Claude Code automatically executes each agent in sequence, passes results between them, and handles retries.
 </details>
 
 <details>
-<summary><strong>Q: Does it work with custom skills I created?</strong></summary>
+<summary><strong>Q: Does it work with my custom agents?</strong></summary>
 
-Yes! It scans `~/.claude/skills/` and `.claude/skills/` to find your custom skills.
+Yes! It scans `~/.claude/agents/` for your custom agents and prioritizes them over built-ins when appropriate.
+</details>
+
+<details>
+<summary><strong>Q: Is it expensive to use?</strong></summary>
+
+No. v1.1 uses only ~1,500 tokens — less than a typical code file. We optimized aggressively.
 </details>
 
 ---
 
 ## 📋 Requirements
 
-- Claude Code 1.0.33+
+- Claude Code CLI
 - Optional: `jq` (for detailed plugin inventory)
 
 ---
