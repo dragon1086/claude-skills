@@ -7,346 +7,345 @@ metadata:
   version: "2.1.0"
 aliases:
   - ta
-  - 도구추천
 ---
 
-# Tool Advisor v2.0 - 최적 도구 추천 스킬
+# Tool Advisor v2.1 - Optimal Tool Recommendation Skill
 
-사용자의 자연어 프롬프트를 분석하여:
-1. **최적 도구 추천** - 로컬 설치된 도구 중 최적 선택
-2. **Harness 패턴 추천** - 복잡한 장기 작업 시 자동 루프 구조 제안
-3. **도구 설치 제안** - 필요한 도구가 없으면 웹 검색 후 설치 권유
+Analyzes user's natural language prompts to provide:
+1. **Optimal Tool Recommendation** - Select the best tool from locally installed options
+2. **Harness Pattern Recommendation** - Suggest auto-loop structures for complex long-running tasks
+3. **Tool Installation Suggestions** - Search web and suggest installation when needed tools are missing
 
-## 분석 프로세스
+## Analysis Process
 
-### Phase 1: 로컬 도구 인벤토리 확인
+### Phase 1: Check Local Tool Inventory
 
-**반드시 먼저 실행:**
+**Always run first:**
 
 ```bash
-# 1. 설치된 플러그인 확인
+# 1. Check installed plugins
 cat ~/.claude/plugins/installed_plugins.json | jq 'keys'
 
-# 2. 설치된 스킬 확인
+# 2. Check installed skills
 ls ~/.claude/skills/
 
-# 3. 설치된 에이전트 확인
+# 3. Check installed agents
 ls ~/.claude/agents/
 ```
 
-위 명령어로 현재 설치된 도구 목록을 파악합니다.
+Use these commands to identify currently installed tools.
 
-### Phase 2: 작업 복잡도 및 Harness 필요성 평가
+### Phase 2: Assess Task Complexity and Harness Needs
 
-| 복잡도 | 특징 | 추천 접근 | Harness 필요 |
-|--------|------|----------|-------------|
-| **단순** | 1-2 파일, 명확한 작업 | 직접 도구 (Read/Edit) | 아니오 |
-| **중간** | 3-5 파일, 여러 단계 | Task 에이전트 또는 스킬 | 아니오 |
-| **복잡** | 5+ 파일, 설계+구현+테스트 | `/feature-dev` + 워크플로우 | 선택적 |
-| **장기/반복** | 목표 완료까지 루프, 다단계 검증 | **Harness 패턴 필수** | **예** |
+| Complexity | Characteristics | Recommended Approach | Harness Needed |
+|------------|-----------------|---------------------|----------------|
+| **Simple** | 1-2 files, clear task | Direct tools (Read/Edit) | No |
+| **Medium** | 3-5 files, multiple steps | Task agent or skill | No |
+| **Complex** | 5+ files, design+implement+test | `/feature-dev` + workflow | Optional |
+| **Long-running** | Loop until goal, multi-stage validation | **Harness pattern required** | **Yes** |
 
-### Phase 3: Harness 필요 여부 판단
+### Phase 3: Determine Harness Requirement
 
-**Harness가 필요한 신호:**
-- "목표 완료까지", "될 때까지", "반복해서"
-- "검토 → 설계 → 개발 → QA → 테스트" 전체 사이클
-- "자동으로", "알아서", "장기간"
-- 여러 에이전트 조율 필요
-- 실패 시 자동 재시도/수정 필요
+**Signals that indicate harness is needed:**
+- "until complete", "keep trying", "repeatedly"
+- "review → design → develop → QA → test" full cycle
+- "automatically", "on its own", "long-term"
+- Multiple agent coordination required
+- Auto-retry/fix on failure needed
 
-**Harness 패턴 종류:**
+**Harness Pattern Types:**
 
-| 패턴 | 설명 | 도구 |
-|------|------|------|
-| **Ralph 패턴** | 목표 완료까지 자율 반복 | `ralph-orchestrator` |
-| **RIPER 워크플로우** | Research→Innovate→Plan→Execute→Review 순환 | `riper-workflow` |
-| **Spec 워크플로우** | 요구사항→설계→구현→검증 파이프라인 | `spec-workflow` |
-| **Full-stack 오케스트레이션** | 백엔드→프론트→테스트→배포 조율 | `full-stack-orchestration` |
-| **Claude Flow** | 분산 에이전트 스웜 | `claude-flow` |
+| Pattern | Description | Tool |
+|---------|-------------|------|
+| **Ralph Pattern** | Autonomous loop until goal completion | `ralph-orchestrator` |
+| **RIPER Workflow** | Research→Innovate→Plan→Execute→Review cycle | `riper-workflow` |
+| **Spec Workflow** | Requirements→Design→Implement→Verify pipeline | `spec-workflow` |
+| **Full-stack Orchestration** | Backend→Frontend→Test→Deploy coordination | `full-stack-orchestration` |
+| **Claude Flow** | Distributed agent swarm | `claude-flow` |
 
-### Phase 4: 도구 부족 시 설치 제안
+### Phase 4: Suggest Installation When Tools Are Missing
 
-로컬에 적절한 도구가 없으면:
+When appropriate local tools are not available:
 
-1. **WebSearch로 최신 도구 탐색**
+1. **Search for latest tools via WebSearch**
 ```
-WebSearch: "Claude Code [작업유형] plugin workflow 2026"
+WebSearch: "Claude Code [task-type] plugin workflow 2026"
 ```
 
-2. **사용자에게 설치 제안 (Human-in-the-loop)**
+2. **Suggest installation to user (Human-in-the-loop)**
 ```markdown
-## 추천 도구 설치 제안
+## Recommended Tool Installation
 
-현재 로컬에 [작업]에 적합한 도구가 없습니다.
+No suitable tools found locally for [task].
 
-### 추천 설치 목록
+### Recommended Installation List
 
-| 도구 | 용도 | 설치 명령 |
-|------|------|----------|
-| [도구1] | [설명] | `/plugin install [도구1]` |
-| [도구2] | [설명] | `/plugin install [도구2]` |
+| Tool | Purpose | Install Command |
+|------|---------|-----------------|
+| [tool1] | [description] | `/plugin install [tool1]` |
+| [tool2] | [description] | `/plugin install [tool2]` |
 
-**설치하시겠습니까?** (예/아니오/일부만)
+**Would you like to install?** (yes/no/some)
 ```
 
-3. **사용자 승인 후 설치 진행**
+3. **Proceed with installation after user approval**
 
 ---
 
-## 출력 형식
+## Output Format
 
-프롬프트: `$ARGUMENTS`
+Prompt: `$ARGUMENTS`
 
-### 분석 결과 템플릿
+### Analysis Result Template
 
 ```markdown
-## 프롬프트 분석 결과
+## Prompt Analysis Result
 
-### 1. 작업 분류
-- **주요 유형**: [개발/리뷰/탐색/비즈니스/...]
-- **부가 유형**: [...]
-- **복잡도**: [단순/중간/복잡/장기반복]
+### 1. Task Classification
+- **Primary Type**: [Development/Review/Exploration/Business/...]
+- **Secondary Type**: [...]
+- **Complexity**: [Simple/Medium/Complex/Long-running]
 
-### 2. Harness 필요성
-- **필요 여부**: [예/아니오]
-- **이유**: [왜 필요하거나 불필요한지]
-- **추천 패턴**: [Ralph/RIPER/Spec/Full-stack/없음]
+### 2. Harness Requirement
+- **Required**: [Yes/No]
+- **Reason**: [Why needed or not needed]
+- **Recommended Pattern**: [Ralph/RIPER/Spec/Full-stack/None]
 
-### 3. 로컬 도구 현황
-- **설치됨**: [사용 가능한 도구 목록]
-- **부족함**: [필요하지만 없는 도구]
+### 3. Local Tool Status
+- **Installed**: [List of available tools]
+- **Missing**: [Tools needed but not installed]
 
-### 4. 추천
+### 4. Recommendation
 
-#### A. 로컬 도구로 충분한 경우
+#### A. When local tools are sufficient
 
-**최적 추천**: [도구명]
-**사용 방법**:
+**Optimal Recommendation**: [tool name]
+**How to use**:
 ```
-[명령어 또는 프롬프트]
-```
-
-#### B. 추가 도구 설치가 필요한 경우
-
-**설치 권장 도구**:
-
-| 도구 | 용도 | 설치 |
-|------|------|------|
-| [도구] | [설명] | `/plugin marketplace add [source]` 후 `/plugin install [도구]` |
-
-**설치 후 사용법**:
-```
-[명령어]
+[command or prompt]
 ```
 
-**지금 설치하시겠습니까?**
+#### B. When additional tool installation is needed
 
-### 5. 워크플로우 제안 (해당 시)
+**Recommended Tools to Install**:
+
+| Tool | Purpose | Installation |
+|------|---------|--------------|
+| [tool] | [description] | `/plugin marketplace add [source]` then `/plugin install [tool]` |
+
+**Usage after installation**:
+```
+[command]
+```
+
+**Would you like to install now?**
+
+### 5. Workflow Suggestion (if applicable)
 
 ```
-[단계별 실행 순서]
-```
-
----
-
-## 🎯 지금 바로 실행
-
-| 당신의 상황 | 복사해서 붙여넣기 |
-|------------|------------------|
-| [상황1] | `[명령어1]` |
-| [상황2] | `[명령어2]` |
-| [상황3] | `[명령어3]` |
-
-**→ 이 작업은 "[권장 옵션]"을 권장** ([이유])
+[Step-by-step execution order]
 ```
 
 ---
 
-## Harness 패턴 상세
+## 🎯 Quick Action
 
-### Ralph 패턴 (자율 반복 루프)
+| Your Situation | Copy & Paste |
+|----------------|--------------|
+| [situation1] | `[command1]` |
+| [situation2] | `[command2]` |
+| [situation3] | `[command3]` |
 
-**언제 사용**: 목표 완료까지 자동으로 반복해야 할 때
+**→ Recommended: "[preferred option]"** ([reason])
+```
 
-**구조**:
+---
+
+## Harness Pattern Details
+
+### Ralph Pattern (Autonomous Loop)
+
+**When to use**: When automatic repetition is needed until goal completion
+
+**Structure**:
 ```
 ┌─────────────────────────────────────────┐
 │              Ralph Harness               │
 ├─────────────────────────────────────────┤
 │                                          │
-│  ┌──────┐    ┌──────┐    ┌──────┐       │
-│  │ 분석 │───▶│ 실행 │───▶│ 검증 │       │
-│  └──────┘    └──────┘    └──┬───┘       │
-│       ▲                     │            │
-│       │     실패 시 재시도   │            │
-│       └─────────────────────┘            │
+│  ┌────────┐  ┌─────────┐  ┌────────┐    │
+│  │ Analyze │─▶│ Execute │─▶│ Verify │    │
+│  └────────┘  └─────────┘  └───┬────┘    │
+│       ▲                       │          │
+│       │     Retry on failure  │          │
+│       └───────────────────────┘          │
 │                                          │
-│  종료 조건: 목표 달성 OR 최대 반복 도달   │
-│  안전장치: circuit breaker, rate limit   │
+│  Exit: Goal achieved OR max iterations   │
+│  Safety: circuit breaker, rate limit     │
 │                                          │
 └─────────────────────────────────────────┘
 ```
 
-**설치 확인**:
+**Check installation**:
 ```bash
-# ralph-orchestrator 설치 여부 확인
+# Check if ralph-orchestrator is installed
 cat ~/.claude/plugins/installed_plugins.json | grep -i ralph
 ```
 
-**미설치 시**:
+**If not installed**:
 ```bash
 /plugin marketplace add wshobson/agents
 /plugin install ralph-orchestrator
 ```
 
-### RIPER 워크플로우
+### RIPER Workflow
 
-**언제 사용**: 체계적인 단계별 진행이 필요할 때
+**When to use**: When systematic step-by-step progression is needed
 
-**구조**:
+**Structure**:
 ```
 Research → Innovate → Plan → Execute → Review
     │                                    │
-    └────────── 피드백 루프 ──────────────┘
+    └────────── Feedback Loop ───────────┘
 ```
 
-### Full-stack 오케스트레이션
+### Full-stack Orchestration
 
-**언제 사용**: 여러 전문 에이전트 조율이 필요할 때
+**When to use**: When multiple specialized agents need coordination
 
-**구조**:
+**Structure**:
 ```
-Phase 1: 설계 (architect, database-designer)
+Phase 1: Design (architect, database-designer)
     ↓
-Phase 2: 구현 (backend, frontend, database) [병렬]
+Phase 2: Implement (backend, frontend, database) [parallel]
     ↓
-Phase 3: 테스트 (unit-tester, e2e-tester, security-auditor) [병렬]
+Phase 3: Test (unit-tester, e2e-tester, security-auditor) [parallel]
     ↓
-Phase 4: 배포 (deployment-engineer, performance-engineer)
+Phase 4: Deploy (deployment-engineer, performance-engineer)
 ```
 
 ---
 
-## 핵심 의사결정 트리
+## Core Decision Tree
 
 ```
-사용자 프롬프트
+User Prompt
       │
       ▼
 ┌─────────────────┐
-│ Harness 필요?   │
+│ Harness needed? │
 └────────┬────────┘
          │
     ┌────┴────┐
     ▼         ▼
-  [예]       [아니오]
-    │            │
-    ▼            ▼
-로컬에      복잡도 체크
-harness        │
-있나?     ┌────┴────┐
-    │     ▼         ▼
-┌───┴───┐ [복잡]   [단순/중간]
-▼       ▼    │         │
-[있음] [없음]  │         ▼
-  │      │    │    로컬 도구로
-  │      ▼    │    충분?
-  │  WebSearch│       │
-  │  + 설치   │   ┌───┴───┐
-  │  제안     │   ▼       ▼
-  │      │    │ [예]    [아니오]
-  ▼      ▼    │   │        │
-사용    설치   │   │    WebSearch
-방법    후     │   │    + 설치 제안
-안내    사용   │   ▼        │
-              │ 직접 도구   │
-              │ 또는 스킬   ▼
-              │   사용    설치 후
-              │          사용
+  [Yes]      [No]
+    │          │
+    ▼          ▼
+Is harness  Check complexity
+installed       │
+locally?   ┌────┴────┐
+    │      ▼         ▼
+┌───┴───┐ [Complex] [Simple/Medium]
+▼       ▼    │           │
+[Yes]  [No]  │           ▼
+  │      │   │      Local tools
+  │      ▼   │      sufficient?
+  │  WebSearch│           │
+  │  + suggest│      ┌────┴────┐
+  │  install  │      ▼         ▼
+  │      │    │    [Yes]      [No]
+  ▼      ▼    │      │          │
+Guide  Install│      │      WebSearch
+usage  then   │      │      + suggest
+       use    │      ▼      install
+              │  Direct tool    │
+              │  or skill       ▼
+              │    use      Install
+              │             then use
               ▼
          /feature-dev
-         또는 harness
+         or harness
 ```
 
 ---
 
-## 실행 지침
+## Execution Guidelines
 
-1. **Phase 1**: Bash로 로컬 도구 인벤토리 확인
-2. **Phase 2**: 프롬프트 분석 (복잡도, harness 필요성)
-3. **Phase 3**: 로컬 도구로 충분한지 판단
-4. **Phase 4**: 부족하면 WebSearch로 도구 탐색 → 설치 제안
-5. **Phase 5**: 최종 추천 및 사용법 안내
-6. **Phase 6**: Quick Action 제시 (복사 가능한 명령어 테이블)
+1. **Phase 1**: Check local tool inventory via Bash
+2. **Phase 2**: Analyze prompt (complexity, harness needs)
+3. **Phase 3**: Determine if local tools are sufficient
+4. **Phase 4**: If insufficient, search tools via WebSearch → suggest installation
+5. **Phase 5**: Provide final recommendation and usage guide
+6. **Phase 6**: Present Quick Action (copyable command table)
 
-**중요**:
-- 도구 설치는 반드시 사용자 승인 후 진행 (Human-in-the-loop)
-- **반드시 마지막에 "🎯 지금 바로 실행" 섹션 포함** (사용자가 즉시 action 가능하도록)
+**Important**:
+- Tool installation only proceeds after user approval (Human-in-the-loop)
+- **Always include "🎯 Quick Action" section at the end** (so user can take immediate action)
 
 ---
 
-## 예시: 복잡한 장기 작업
+## Example: Complex Long-running Task
 
-**입력**:
+**Input**:
 ```
-entrypoint.sh 검토하고, 필요하면 하루 1번 갱신 구조로 리팩토링해줘.
-DeepSearch API로 대체 가능한지 검토하고 기존 패턴 참고해서 구현해.
-plan mode로 생각해봐.
+Review entrypoint.sh and refactor to daily refresh structure if needed.
+Check if DeepSearch API can replace current approach and implement using existing patterns.
+Think through this in plan mode.
 ```
 
-**출력**:
+**Output**:
 ```markdown
-## 프롬프트 분석 결과
+## Prompt Analysis Result
 
-### 1. 작업 분류
-- **주요 유형**: 기능 개발/리팩토링
-- **부가 유형**: 코드 탐색, 외부 문서 참조, 패턴 분석
-- **복잡도**: 복잡 (5+ 파일, 설계 필요)
+### 1. Task Classification
+- **Primary Type**: Feature Development/Refactoring
+- **Secondary Type**: Code exploration, external doc reference, pattern analysis
+- **Complexity**: Complex (5+ files, design needed)
 
-### 2. Harness 필요성
-- **필요 여부**: 선택적 (단일 기능이지만 다단계)
-- **이유**: 설계→구현→테스트 사이클이지만 1회성 작업
-- **추천 패턴**: 없음 (하지만 실패 시 Ralph 고려)
+### 2. Harness Requirement
+- **Required**: Optional (single feature but multi-stage)
+- **Reason**: Design→Implement→Test cycle but one-time task
+- **Recommended Pattern**: None (but consider Ralph if failures occur)
 
-### 3. 로컬 도구 현황
-- **설치됨**: feature-dev, full-stack-orchestration, comprehensive-review
-- **부족함**: 없음 (충분)
+### 3. Local Tool Status
+- **Installed**: feature-dev, full-stack-orchestration, comprehensive-review
+- **Missing**: None (sufficient)
 
-### 4. 추천
+### 4. Recommendation
 
-**최적 추천**: `/feature-dev`
+**Optimal Recommendation**: `/feature-dev`
 
-**이유**:
-- "plan mode" 요청 → 설계 우선 접근
-- 기존 패턴 분석 → 동일 패턴 구현 필요
-- 가이드된 흐름으로 중간 확인 가능
+**Reason**:
+- "plan mode" request → design-first approach
+- Existing pattern analysis → need to implement same pattern
+- Guided flow allows mid-process verification
 
-**사용 방법**:
+**How to use**:
 ```
 /feature-dev
 
-입력할 프롬프트:
-entrypoint.sh의 종목 데이터 업데이트 로직을 검토하고
-DeepSearch API 기반 하루 1회 갱신 구조로 리팩토링해줘.
-참고 문서: /Users/aerok/.../02-company.md
-기존 deepsearch 호출 패턴과 동일하게 구현.
+Prompt to enter:
+Review the stock data update logic in entrypoint.sh
+and refactor to DeepSearch API-based daily refresh structure.
+Reference doc: /Users/aerok/.../02-company.md
+Implement using same pattern as existing deepsearch calls.
 ```
 
-### 5. 대안
-1. **EnterPlanMode** - 더 자유로운 계획 수립 원할 때
-2. **Ralph + feature-dev** - 구현 후 자동 검증 루프 원할 때
+### 5. Alternatives
+1. **EnterPlanMode** - When you want more flexible planning
+2. **Ralph + feature-dev** - When you want auto-verification loop after implementation
 
 ---
 
-## 🎯 지금 바로 실행
+## 🎯 Quick Action
 
-| 당신의 상황 | 복사해서 붙여넣기 |
-|------------|------------------|
-| 계획 먼저 보고 싶다 | `Plan Mode로 entrypoint.sh 리팩토링 계획 세워줘` |
-| 가이드된 개발 원한다 | `/feature-dev` 입력 후 위 프롬프트 사용 |
-| 바로 구현해줘 | `entrypoint.sh를 DeepSearch API로 리팩토링해줘` |
+| Your Situation | Copy & Paste |
+|----------------|--------------|
+| Want to see plan first | `Plan the entrypoint.sh refactoring in Plan Mode` |
+| Want guided development | Use `/feature-dev` then enter the prompt above |
+| Just implement it | `Refactor entrypoint.sh to use DeepSearch API` |
 
-**→ 이 작업은 "계획 먼저"를 권장** (5+ 파일, 설계 필요)
+**→ Recommended: "Plan first"** (5+ files, design needed)
 ```
 
-분석할 프롬프트: $ARGUMENTS
+Prompt to analyze: $ARGUMENTS
