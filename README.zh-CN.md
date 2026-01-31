@@ -17,7 +17,7 @@ curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/insta
 
 **方式二：通过 [skills.sh](https://skills.sh)**
 ```bash
-npx skills add dragon1086/claude-skills
+npx skills add dragon1086/claude-skills -y --agent claude-code
 ```
 
 更新时运行相同的命令即可。
