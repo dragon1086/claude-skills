@@ -2,9 +2,9 @@
 
 [English](./README.md) | [한국어](./README.ko.md) | [日本語](./README.ja.md) | [中文](./README.zh-CN.md) | [Español](./README.es.md) | [Português](./README.pt-BR.md) | [Русский](./README.ru.md) | **Français** | [Deutsch](./README.de.md)
 
-**Arrêtez de deviner quel outil utiliser. Laissez Claude Code décider.**
+**Decouvrez votre environnement d'outils. Amplifiez vos capacites.**
 
-Tool Advisor analyse votre prompt et recommande la combinaison optimale d'outils, d'agents, de serveurs MCP et de patterns d'orchestration — avec des **commandes prêtes à copier-coller** que vous pouvez exécuter immédiatement.
+Tool Advisor scanne votre environnement d'execution — serveurs MCP, skills, plugins, outils CLI — et suggere des compositions optimales d'outils sous forme d'**options non contraignantes** avec des commandes pretes a copier-coller. Il fournit au modele des connaissances qu'il n'aurait pas autrement.
 
 ![Demo](./assets/demo.gif)
 
@@ -20,7 +20,7 @@ curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/insta
 npx skills add dragon1086/claude-skills -y --agent claude-code
 ```
 
-Pour mettre à jour, exécutez la même commande à nouveau.
+Pour mettre a jour, executez la meme commande a nouveau.
 
 ## Utilisation
 
@@ -28,88 +28,106 @@ Demandez simplement naturellement :
 
 ```
 "Analyse avec tool-advisor : refactoriser le module d'authentification"
-"tool-advisor, comment devrais-je aborder cette migration de base de données ?"
-"Quelle est la meilleure approche pour implémenter l'authentification utilisateur ?"
+"tool-advisor, comment devrais-je aborder cette migration de base de donnees ?"
+"Quelle est la meilleure approche pour implementer l'authentification utilisateur ?"
 ```
 
 La skill s'active lorsque vous mentionnez **tool-advisor** ou demandez des recommandations d'outils.
 
-## Comment ça marche
+## Comment ca marche
 
 ```
 Votre Prompt
     ↓
-┌─────────────────────────────────┐
-│        Tool Advisor             │
-├─────────────────────────────────┤
-│ 1. Vérifier l'inventaire local  │
-│ 2. Évaluer la complexité        │
-│ 3. Détecter le besoin de harness│
-│ 4. Recommander plan mode ?      │
-│ 5. Sélectionner agents (3 niv.) │
-│ 6. Vérifier les besoins MCP     │
-│ 7. Suggérer l'installation      │
-│ 8. Table d'Action Rapide        │
-└─────────────────────────────────┘
+┌──────────────────────────────────┐
+│     Tool Advisor v3.0            │
+│  « Amplificateur, pas Commandant │
+├──────────────────────────────────┤
+│ 1. Decouvrir l'Environnement     │
+│    MCP / Skills / Plugins / CLI  │
+│ 2. Analyser la Tache (3 dimens.) │
+│ 3. Apparier les Capacites        │
+│ 4. Suggerer des Options (max 3)  │
+│ 5. Identifier les Lacunes        │
+│ 6. Conseils de Performance       │
+└──────────────────────────────────┘
     ↓
-🎯 Commandes prêtes à copier-coller
+Options + Tableau d'Action Rapide
 ```
 
-## Fonctionnalités
+## Fonctionnalites
 
-| Fonctionnalité | Description |
+| Fonctionnalite | Description |
 |----------------|-------------|
-| **Table d'Action Rapide** | Commandes à copier-coller pour exécution immédiate |
-| **Détection Plan Mode** | Recommande `EnterPlanMode` pour les tâches complexes |
-| **Patterns Harness** | Détecte "jusqu'à ce que", "continuer d'essayer" → pattern Ralph |
-| **Recherche d'Agents 3 Niveaux** | Intégré → Local personnalisé → Marketplace |
-| **Recommandation MCP** | Affiche le statut d'installation (✅/❌) avec alternatives |
+| **Scan d'Environnement 4 Couches** | Decouvre serveurs MCP, skills, plugins et outils CLI a l'execution |
+| **Analyse Minimale des Taches** | 3 dimensions uniquement (type, echelle, traits) — pas de sur-classification |
+| **Suggestions Multi-Options** | Jusqu'a 3 approches (Methodique / Rapide / Approfondi) — jamais impose |
+| **Analyse des Lacunes** | Suggere les outils manquants avec mention « realisable sans ceux-ci » |
+| **Conseils de Performance** | Astuces specifiques Opus 4.6 (parallelisme, arriere-plan, contexte) |
 | **Human-in-the-loop** | N'installe jamais sans votre approbation |
 
 ## Exemple
 
-**Entrée :**
+**Entree :**
 ```
 Analyse avec tool-advisor : Refactoriser le module auth pour utiliser les tokens JWT
 ```
 
 **Sortie :**
 ```markdown
-## Résultat de l'Analyse
+## Tool Advisor v3.0 — Analyse d'Environnement et Composition
 
-### 1. Classification
-- Type : Refactorisation/Architecture
-- Complexité : Complexe (5+ fichiers)
+Prompt: `Refactoriser le module auth pour utiliser les tokens JWT`
 
-### 2. Harness
-- Requis : Non
+### Votre Environnement
 
-### 3. Plan Mode
-- Recommandé : Oui
-- Raison : Fichiers multiples, sensible à la sécurité
+| Couche | Disponible |
+|--------|-----------|
+| Serveurs MCP | lsp, context7 |
+| Skills | /feature-dev, /code-review, /tdd |
+| Plugins | oh-my-claudecode (33 agents) |
+| CLI | git, node, pytest, docker |
 
-### 4. Agent
-- feature-dev (installé)
-- backend-developer (agent local)
-- security-engineer (agent local)
+### Profil de la Tache
+- **Type** : Modification (refactorisation)
+- **Echelle** : Grande (~10+ fichiers)
+- **Traits** : Necessite planification, a des tests, decision architecturale
 
-### 5. Recommandation
-Utiliser /feature-dev avec Plan Mode
+### Capacites Pertinentes
+- `lsp_diagnostics` — Verification de types apres modifications
+- `ast_grep_search` — Trouver les patterns d'utilisation des sessions
+- `/feature-dev` — Flux de developpement guide
+- `Explore` sous-agent — Investigation securisee en lecture seule
+
+### Approches Suggerees
+
+**A — Methodique** (Recommande)
+Task(Explore) -> EnterPlanMode -> Edit par etapes -> Bash(pytest)
+
+**B — Guide par Skill**
+/feature-dev (gere l'ensemble du flux)
+
+**C — Agents en Parallele**
+[Task(Explore, bg), WebSearch("JWT best practices")] -> planifier -> implementer
+
+### Conseils de Performance
+- Opportunite parallele : explore + web search peuvent s'executer simultanement
+- Candidat arriere-plan : execution de la suite de tests
 
 ---
 
-## 🎯 Action Rapide
+## Action Rapide
 
-| Votre situation | Copier-coller |
-|-----------------|---------------|
-| D'abord planifier | `Planifie le refactoring JWT` |
-| Développement guidé | `/feature-dev` |
-| Fais-le simplement | `Refactorise auth pour utiliser JWT` |
+| Approche | Copier-coller |
+|----------|---------------|
+| Methodique | Commencer avec `Task(Explore)` pour explorer le code |
+| Guide par Skill | `/feature-dev` puis decrire la refactorisation |
+| Rapide | `Glob("**/auth/**") + Grep("session")` en parallele |
 
-→ Recommandé : "D'abord planifier" (5+ fichiers, sensible à la sécurité)
+-> Recommande : « Methodique » (la refactorisation importante beneficie d'une planification prealable)
 ```
 
-## Prérequis
+## Prerequis
 
 - Claude Code CLI
 

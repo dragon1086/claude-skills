@@ -2,20 +2,20 @@
 
 [English](./README.md) | [한국어](./README.ko.md) | [日本語](./README.ja.md) | [中文](./README.zh-CN.md) | [Español](./README.es.md) | **Português** | [Русский](./README.ru.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md)
 
-**Pare de adivinhar qual ferramenta usar. Deixe o Claude Code decidir.**
+**Descubra seu ambiente de ferramentas. Amplifique suas capacidades.**
 
-O Tool Advisor analisa seu prompt e recomenda a combinação ideal de ferramentas, agentes, servidores MCP e padrões de orquestração — com **comandos prontos para copiar e colar** que você pode executar imediatamente.
+O Tool Advisor escaneia seu ambiente em tempo de execucao — servidores MCP, skills, plugins, ferramentas CLI — e sugere composicoes otimas de ferramentas como **opcoes nao vinculantes** com comandos prontos para copiar e colar. Ele fornece ao modelo conhecimento que nao teria de outra forma.
 
 ![Demo](./assets/demo.gif)
 
-## Instalação
+## Instalacao
 
-**Opção 1: Instalação em uma linha**
+**Opcao 1: Instalacao em uma linha**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash
 ```
 
-**Opção 2: Via [skills.sh](https://skills.sh)**
+**Opcao 2: Via [skills.sh](https://skills.sh)**
 ```bash
 npx skills add dragon1086/claude-skills -y --agent claude-code
 ```
@@ -27,92 +27,110 @@ Para atualizar, execute o mesmo comando novamente.
 Apenas pergunte naturalmente:
 
 ```
-"Analise com tool-advisor: refatorar o módulo de autenticação"
-"tool-advisor, como devo abordar esta migração de banco de dados?"
-"Qual é a melhor abordagem para implementar autenticação de usuários?"
+"Analise com tool-advisor: refatorar o modulo de autenticacao"
+"tool-advisor, como devo abordar esta migracao de banco de dados?"
+"Qual e a melhor abordagem para implementar autenticacao de usuarios?"
 ```
 
-A skill é ativada quando você menciona **tool-advisor** ou pede recomendações de ferramentas.
+A skill e ativada quando voce menciona **tool-advisor** ou pede recomendacoes de ferramentas.
 
 ## Como Funciona
 
 ```
 Seu Prompt
     ↓
-┌─────────────────────────────────┐
-│        Tool Advisor             │
-├─────────────────────────────────┤
-│ 1. Verificar inventário local   │
-│ 2. Avaliar complexidade         │
-│ 3. Detectar necessidade harness │
-│ 4. Recomendar plan mode?        │
-│ 5. Selecionar agentes (3 níveis)│
-│ 6. Verificar necessidades MCP   │
-│ 7. Sugerir instalação           │
-│ 8. Tabela de Ação Rápida        │
-└─────────────────────────────────┘
+┌──────────────────────────────────┐
+│     Tool Advisor v3.0            │
+│  "Amplificador, nao Comandante" │
+├──────────────────────────────────┤
+│ 1. Descobrir Ambiente            │
+│    MCP / Skills / Plugins / CLI  │
+│ 2. Analisar Tarefa (3 dimensoes)│
+│ 3. Combinar Capacidades          │
+│ 4. Sugerir Opcoes (ate 3)        │
+│ 5. Identificar Lacunas           │
+│ 6. Dicas de Performance          │
+└──────────────────────────────────┘
     ↓
-🎯 Comandos prontos para copiar e colar
+Opcoes + Tabela de Acao Rapida
 ```
 
 ## Recursos
 
-| Recurso | Descrição |
+| Recurso | Descricao |
 |---------|-----------|
-| **Tabela de Ação Rápida** | Comandos para copiar e colar de execução imediata |
-| **Detecção de Plan Mode** | Recomenda `EnterPlanMode` para tarefas complexas |
-| **Padrões Harness** | Detecta "até que", "continue tentando" → padrão Ralph |
-| **Busca de Agentes 3 Níveis** | Integrado → Local personalizado → Marketplace |
-| **Recomendação MCP** | Mostra status de instalação (✅/❌) com alternativas |
-| **Human-in-the-loop** | Nunca instala sem sua aprovação |
+| **Escaneamento de Ambiente 4 Camadas** | Descobre servidores MCP, skills, plugins e ferramentas CLI em tempo de execucao |
+| **Analise Minima de Tarefas** | Apenas 3 dimensoes (tipo, escala, caracteristicas) — nao sobre-classifica |
+| **Sugestoes Multi-Opcao** | Ate 3 abordagens (Metodico / Rapido / Profundo) — nunca impoe |
+| **Analise de Lacunas** | Sugere ferramentas faltantes com aviso "realizavel sem estas" |
+| **Dicas de Performance** | Dicas especificas do Opus 4.6 (paralelismo, segundo plano, contexto) |
+| **Human-in-the-loop** | Nunca instala sem sua aprovacao |
 
 ## Exemplo
 
 **Entrada:**
 ```
-Analise com tool-advisor: Refatorar módulo auth para usar tokens JWT
+Analise com tool-advisor: Refatorar modulo auth para usar tokens JWT
 ```
 
-**Saída:**
+**Saida:**
 ```markdown
-## Resultado da Análise
+## Tool Advisor v3.0 — Analise de Ambiente e Composicao
 
-### 1. Classificação
-- Tipo: Refatoração/Arquitetura
-- Complexidade: Complexa (5+ arquivos)
+Prompt: `Refatorar modulo auth para usar tokens JWT`
 
-### 2. Harness
-- Necessário: Não
+### Seu Ambiente
 
-### 3. Plan Mode
-- Recomendado: Sim
-- Motivo: Múltiplos arquivos, sensível à segurança
+| Camada | Disponivel |
+|--------|-----------|
+| Servidores MCP | lsp, context7 |
+| Skills | /feature-dev, /code-review, /tdd |
+| Plugins | oh-my-claudecode (33 agentes) |
+| CLI | git, node, pytest, docker |
 
-### 4. Agente
-- feature-dev (instalado)
-- backend-developer (agente local)
-- security-engineer (agente local)
+### Perfil da Tarefa
+- **Tipo**: Modificacao (refatoracao)
+- **Escala**: Grande (~10+ arquivos)
+- **Caracteristicas**: Precisa planejamento, tem testes, decisao arquitetonica
 
-### 5. Recomendação
-Usar /feature-dev com Plan Mode
+### Capacidades Relevantes
+- `lsp_diagnostics` — Verificacao de tipos pos-mudancas
+- `ast_grep_search` — Encontrar padroes de uso de sessoes
+- `/feature-dev` — Fluxo de desenvolvimento guiado
+- `Explore` subagente — Investigacao segura somente leitura
+
+### Abordagens Sugeridas
+
+**A — Metodico** (Recomendado)
+Task(Explore) -> EnterPlanMode -> Edit em etapas -> Bash(pytest)
+
+**B — Guiado por Skill**
+/feature-dev (gerencia todo o fluxo)
+
+**C — Agentes em Paralelo**
+[Task(Explore, bg), WebSearch("JWT best practices")] -> planejar -> implementar
+
+### Dicas de Performance
+- Oportunidade paralela: explore + web search podem executar simultaneamente
+- Candidato a segundo plano: execucao da suite de testes
 
 ---
 
-## 🎯 Ação Rápida
+## Acao Rapida
 
-| Sua situação | Copiar e colar |
-|--------------|----------------|
-| Planejar primeiro | `Planeje a refatoração JWT` |
-| Desenvolvimento guiado | `/feature-dev` |
-| Apenas faça | `Refatore auth para usar JWT` |
+| Abordagem | Copiar e Colar |
+|-----------|----------------|
+| Metodico | Comecar com `Task(Explore)` para explorar o codigo |
+| Guiado por Skill | `/feature-dev` e descrever a refatoracao |
+| Rapido | `Glob("**/auth/**") + Grep("session")` em paralelo |
 
-→ Recomendado: "Planejar primeiro" (5+ arquivos, sensível à segurança)
+-> Recomendado: "Metodico" (refatoracao grande se beneficia de planejar primeiro)
 ```
 
 ## Requisitos
 
 - Claude Code CLI
 
-## Licença
+## Licenca
 
 MIT © 2026 dragon1086
