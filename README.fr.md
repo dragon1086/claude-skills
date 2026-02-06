@@ -40,12 +40,12 @@ La skill s'active lorsque vous mentionnez **tool-advisor** ou demandez des recom
 Votre Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.0            │
+│     Tool Advisor v3.1            │
 │  « Amplificateur, pas Commandant │
 ├──────────────────────────────────┤
 │ 1. Decouvrir l'Environnement     │
 │    MCP / Skills / Plugins / CLI  │
-│ 2. Analyser la Tache (3 dimens.) │
+│ 2. Analyser Tache + Done When    │
 │ 3. Apparier les Capacites        │
 │ 4. Suggerer des Options (max 3)  │
 │ 5. Identifier les Lacunes        │
@@ -60,10 +60,10 @@ Options + Tableau d'Action Rapide
 | Fonctionnalite | Description |
 |----------------|-------------|
 | **Scan d'Environnement 4 Couches** | Decouvre serveurs MCP, skills, plugins et outils CLI a l'execution |
-| **Analyse Minimale des Taches** | 3 dimensions uniquement (type, echelle, traits) — pas de sur-classification |
+| **Criteres de Completion** | Extrait « Done when » des prompts pour que le modele connaisse l'objectif |
+| **Sortie Adaptative** | Petites taches <10 lignes ; grandes taches analyse complete |
 | **Suggestions Multi-Options** | Jusqu'a 3 approches (Methodique / Rapide / Approfondi) — jamais impose |
 | **Analyse des Lacunes** | Suggere les outils manquants avec mention « realisable sans ceux-ci » |
-| **Conseils de Performance** | Astuces specifiques Opus 4.6 (parallelisme, arriere-plan, contexte) |
 | **Human-in-the-loop** | N'installe jamais sans votre approbation |
 
 ## Exemple
@@ -75,7 +75,7 @@ Analyse avec tool-advisor : Refactoriser le module auth pour utiliser les tokens
 
 **Sortie :**
 ```markdown
-## Tool Advisor v3.0 — Analyse d'Environnement et Composition
+## Tool Advisor v3.1 — Analyse d'Environnement et Composition
 
 Prompt: `Refactoriser le module auth pour utiliser les tokens JWT`
 
@@ -89,15 +89,13 @@ Prompt: `Refactoriser le module auth pour utiliser les tokens JWT`
 | CLI | git, node, pytest, docker |
 
 ### Profil de la Tache
-- **Type** : Modification (refactorisation)
-- **Echelle** : Grande (~10+ fichiers)
-- **Traits** : Necessite planification, a des tests, decision architecturale
+- **Type** : Modification / **Echelle** : Grande / **Traits** : Necessite planification, a des tests
+- **Done when** : auth par sessions remplace par JWT, tests passent, aucun import de session
 
 ### Capacites Pertinentes
 - `lsp_diagnostics` — Verification de types apres modifications
 - `ast_grep_search` — Trouver les patterns d'utilisation des sessions
 - `/feature-dev` — Flux de developpement guide
-- `Explore` sous-agent — Investigation securisee en lecture seule
 
 ### Approches Suggerees
 
@@ -109,10 +107,6 @@ Task(Explore) -> EnterPlanMode -> Edit par etapes -> Bash(pytest)
 
 **C — Agents en Parallele**
 [Task(Explore, bg), WebSearch("JWT best practices")] -> planifier -> implementer
-
-### Conseils de Performance
-- Opportunite parallele : explore + web search peuvent s'executer simultanement
-- Candidat arriere-plan : execution de la suite de tests
 
 ---
 

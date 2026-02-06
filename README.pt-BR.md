@@ -40,12 +40,12 @@ A skill e ativada quando voce menciona **tool-advisor** ou pede recomendacoes de
 Seu Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.0            │
+│     Tool Advisor v3.1            │
 │  "Amplificador, nao Comandante" │
 ├──────────────────────────────────┤
 │ 1. Descobrir Ambiente            │
 │    MCP / Skills / Plugins / CLI  │
-│ 2. Analisar Tarefa (3 dimensoes)│
+│ 2. Analisar Tarefa + Done When   │
 │ 3. Combinar Capacidades          │
 │ 4. Sugerir Opcoes (ate 3)        │
 │ 5. Identificar Lacunas           │
@@ -60,10 +60,10 @@ Opcoes + Tabela de Acao Rapida
 | Recurso | Descricao |
 |---------|-----------|
 | **Escaneamento de Ambiente 4 Camadas** | Descobre servidores MCP, skills, plugins e ferramentas CLI em tempo de execucao |
-| **Analise Minima de Tarefas** | Apenas 3 dimensoes (tipo, escala, caracteristicas) — nao sobre-classifica |
+| **Criterios de Conclusao** | Extrai "Done when" dos prompts para o modelo conhecer a meta |
+| **Saida Adaptativa** | Tarefas pequenas <10 linhas; tarefas grandes analise completa |
 | **Sugestoes Multi-Opcao** | Ate 3 abordagens (Metodico / Rapido / Profundo) — nunca impoe |
 | **Analise de Lacunas** | Sugere ferramentas faltantes com aviso "realizavel sem estas" |
-| **Dicas de Performance** | Dicas especificas do Opus 4.6 (paralelismo, segundo plano, contexto) |
 | **Human-in-the-loop** | Nunca instala sem sua aprovacao |
 
 ## Exemplo
@@ -75,7 +75,7 @@ Analise com tool-advisor: Refatorar modulo auth para usar tokens JWT
 
 **Saida:**
 ```markdown
-## Tool Advisor v3.0 — Analise de Ambiente e Composicao
+## Tool Advisor v3.1 — Analise de Ambiente e Composicao
 
 Prompt: `Refatorar modulo auth para usar tokens JWT`
 
@@ -89,15 +89,13 @@ Prompt: `Refatorar modulo auth para usar tokens JWT`
 | CLI | git, node, pytest, docker |
 
 ### Perfil da Tarefa
-- **Tipo**: Modificacao (refatoracao)
-- **Escala**: Grande (~10+ arquivos)
-- **Caracteristicas**: Precisa planejamento, tem testes, decisao arquitetonica
+- **Tipo**: Modificacao / **Escala**: Grande / **Caracteristicas**: Precisa planejamento, tem testes
+- **Done when**: auth baseado em sessoes substituido por JWT, testes passam, sem imports de sessao
 
 ### Capacidades Relevantes
 - `lsp_diagnostics` — Verificacao de tipos pos-mudancas
 - `ast_grep_search` — Encontrar padroes de uso de sessoes
 - `/feature-dev` — Fluxo de desenvolvimento guiado
-- `Explore` subagente — Investigacao segura somente leitura
 
 ### Abordagens Sugeridas
 
@@ -109,10 +107,6 @@ Task(Explore) -> EnterPlanMode -> Edit em etapas -> Bash(pytest)
 
 **C — Agentes em Paralelo**
 [Task(Explore, bg), WebSearch("JWT best practices")] -> planejar -> implementar
-
-### Dicas de Performance
-- Oportunidade paralela: explore + web search podem executar simultaneamente
-- Candidato a segundo plano: execucao da suite de testes
 
 ---
 

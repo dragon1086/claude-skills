@@ -40,12 +40,12 @@ Der Skill wird aktiviert, wenn Sie **tool-advisor** erwahnen oder nach Tool-Empf
 Ihr Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.0            │
+│     Tool Advisor v3.1            │
 │  „Verstarker, nicht Kommandant"  │
 ├──────────────────────────────────┤
 │ 1. Umgebung entdecken            │
 │    MCP / Skills / Plugins / CLI  │
-│ 2. Aufgabe analysieren (3 Dim.)  │
+│ 2. Aufgabe analysieren + Done W. │
 │ 3. Fahigkeiten abgleichen        │
 │ 4. Optionen vorschlagen (bis 3)  │
 │ 5. Lucken identifizieren         │
@@ -60,10 +60,10 @@ Optionen + Schnellaktion-Tabelle
 | Funktion | Beschreibung |
 |----------|--------------|
 | **4-Schichten-Umgebungsscan** | Entdeckt MCP-Server, Skills, Plugins und CLI-Tools zur Laufzeit |
-| **Minimale Aufgabenanalyse** | Nur 3 Dimensionen (Typ, Umfang, Merkmale) — keine Uber-Klassifizierung |
+| **Abschlusskriterien** | Extrahiert „Done when" aus Prompts, damit das Modell das Ziel kennt |
+| **Adaptive Ausgabe** | Kleine Aufgaben <10 Zeilen; grosse Aufgaben vollstandige Analyse |
 | **Multi-Optionen-Vorschlage** | Bis zu 3 Ansatze (Methodisch / Schnell / Tiefgehend) — nie aufgezwungen |
 | **Luckenanalyse** | Schlagt fehlende Tools vor mit Hinweis „auch ohne diese machbar" |
-| **Performance-Tipps** | Opus 4.6-spezifische Hinweise (Parallelitat, Hintergrund, Kontext) |
 | **Human-in-the-loop** | Installiert niemals ohne Ihre Zustimmung |
 
 ## Beispiel
@@ -75,7 +75,7 @@ Analysiere mit tool-advisor: Auth-Modul refaktorisieren fur JWT-Token
 
 **Ausgabe:**
 ```markdown
-## Tool Advisor v3.0 — Umgebungs- und Kompositionsanalyse
+## Tool Advisor v3.1 — Umgebungs- und Kompositionsanalyse
 
 Prompt: `Auth-Modul refaktorisieren fur JWT-Token`
 
@@ -89,15 +89,13 @@ Prompt: `Auth-Modul refaktorisieren fur JWT-Token`
 | CLI | git, node, pytest, docker |
 
 ### Aufgabenprofil
-- **Typ**: Modifikation (Refaktorisierung)
-- **Umfang**: Gross (~10+ Dateien)
-- **Merkmale**: Benotigt Planung, hat Tests, Architekturentscheidung
+- **Typ**: Modifikation / **Umfang**: Gross / **Merkmale**: Benotigt Planung, hat Tests
+- **Done when**: Session-Auth ersetzt durch JWT, Tests bestanden, keine Session-Imports
 
 ### Relevante Fahigkeiten
 - `lsp_diagnostics` — Typprufung nach Anderungen
 - `ast_grep_search` — Session-Nutzungsmuster finden
 - `/feature-dev` — Gefuhrter Entwicklungsworkflow
-- `Explore` Subagent — Sichere schreibgeschutzte Untersuchung
 
 ### Vorgeschlagene Ansatze
 
@@ -109,10 +107,6 @@ Task(Explore) -> EnterPlanMode -> Edit stufenweise -> Bash(pytest)
 
 **C — Agenten parallel**
 [Task(Explore, bg), WebSearch("JWT best practices")] -> planen -> implementieren
-
-### Performance-Tipps
-- Parallelitats-Moglichkeit: explore + web search konnen gleichzeitig laufen
-- Hintergrund-Kandidat: Testausfuhrung
 
 ---
 

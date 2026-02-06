@@ -40,12 +40,12 @@ The skill activates when you mention **tool-advisor** or ask for tool recommenda
 Your Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.0            │
+│     Tool Advisor v3.1            │
 │     "Amplifier, not Commander"   │
 ├──────────────────────────────────┤
 │ 1. Discover Environment          │
 │    MCP / Skills / Plugins / CLI  │
-│ 2. Analyze Task (3 dimensions)   │
+│ 2. Analyze Task + Done When      │
 │ 3. Match Capabilities            │
 │ 4. Suggest Options (up to 3)     │
 │ 5. Identify Gaps                 │
@@ -60,10 +60,10 @@ Options + Quick Action table
 | Feature | Description |
 |---------|-------------|
 | **4-Layer Environment Scan** | Discovers MCP servers, skills, plugins, and CLI tools at runtime |
-| **Minimal Task Analysis** | 3 dimensions only (type, scale, traits) — doesn't over-classify |
+| **Completion Criteria** | Extracts "Done when" from prompts so the model knows the finish line |
+| **Scale-Adaptive Output** | Small tasks get <10 lines; large tasks get full analysis |
 | **Multi-Option Suggestions** | Up to 3 approaches (Methodical / Fast / Deep) — never mandates |
 | **Capability Gap Analysis** | Suggests missing tools with "doable without these" disclaimer |
-| **Performance Tips** | Opus 4.6-specific hints (parallelism, background, context leverage) |
 | **Human-in-the-loop** | Never installs without your approval |
 
 ## Example
@@ -75,7 +75,7 @@ Analyze with tool-advisor: Refactor auth module to use JWT tokens
 
 **Output:**
 ```markdown
-## Tool Advisor v3.0 — Environment & Composition Analysis
+## Tool Advisor v3.1 — Environment & Composition Analysis
 
 Prompt: `Refactor auth module to use JWT tokens`
 
@@ -89,15 +89,13 @@ Prompt: `Refactor auth module to use JWT tokens`
 | CLI | git, node, pytest, docker |
 
 ### Task Profile
-- **Type**: Modification (refactoring)
-- **Scale**: Large (~10+ files)
-- **Traits**: Needs planning, has tests, architecture decision
+- **Type**: Modification / **Scale**: Large / **Traits**: Needs planning, has tests
+- **Done when**: all session-based auth replaced with JWT, tests pass, no session imports remain
 
 ### Relevant Capabilities
 - `lsp_diagnostics` — Type-check after changes
 - `ast_grep_search` — Find all session usage patterns
 - `/feature-dev` — Guided development workflow
-- `Explore` subagent — Safe read-only investigation
 
 ### Suggested Approaches
 
@@ -109,10 +107,6 @@ Task(Explore) -> EnterPlanMode -> Edit in stages -> Bash(pytest)
 
 **C — Agent-parallel**
 [Task(Explore, bg), WebSearch("JWT best practices")] -> plan -> implement
-
-### Performance Tips
-- Parallel opportunity: explore + web search can run simultaneously
-- Background candidate: test suite run
 
 ---
 

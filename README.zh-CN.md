@@ -40,12 +40,12 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 你的提示词
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.0            │
+│     Tool Advisor v3.1            │
 │     「放大器，而非指挥官」         │
 ├──────────────────────────────────┤
 │ 1. 发现环境                       │
 │    MCP / 技能 / 插件 / CLI        │
-│ 2. 分析任务（3个维度）            │
+│ 2. 分析任务 + 完成标准            │
 │ 3. 匹配能力                       │
 │ 4. 建议选项（最多3个）            │
 │ 5. 差距分析                       │
@@ -60,10 +60,10 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 | 功能 | 描述 |
 |------|------|
 | **4层环境扫描** | 在运行时发现 MCP 服务器、技能、插件和 CLI 工具 |
-| **最小任务分析** | 仅分析3个维度（类型、规模、特征）— 避免过度分类 |
+| **完成标准** | 从提示词中提取"Done when"，让模型明确目标 |
+| **规模自适应输出** | 小任务<10行，大任务完整分析 |
 | **多选项建议** | 最多3种方案（稳妥 / 快速 / 深入）— 不强制执行 |
 | **能力差距分析** | 建议缺失工具 + 明确标注"没有也能完成" |
-| **性能提示** | Opus 4.6 专属提示（并行化、后台运行、上下文利用） |
 | **人机协作** | 未经你的批准绝不安装 |
 
 ## 示例
@@ -75,7 +75,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 
 **输出：**
 ```markdown
-## Tool Advisor v3.0 — 环境与组合分析
+## Tool Advisor v3.1 — 环境与组合分析
 
 Prompt: `将认证模块重构为 JWT`
 
@@ -89,15 +89,13 @@ Prompt: `将认证模块重构为 JWT`
 | CLI | git, node, pytest, docker |
 
 ### 任务概况
-- **类型**：修改（重构）
-- **规模**：大型（~10+ 文件）
-- **特征**：需要规划、有测试、架构决策
+- **类型**：修改 / **规模**：大型 / **特征**：需要规划、有测试
+- **Done when**：会话认证替换为JWT、测试通过、无会话import残留
 
 ### 相关能力
 - `lsp_diagnostics` — 变更后类型检查
 - `ast_grep_search` — 查找所有会话使用模式
 - `/feature-dev` — 引导式开发工作流
-- `Explore` 子代理 — 安全的只读调查
 
 ### 建议方案
 
@@ -109,10 +107,6 @@ Task(Explore) -> EnterPlanMode -> 分阶段 Edit -> Bash(pytest)
 
 **C — 代理并行**
 [Task(Explore, bg), WebSearch("JWT best practices")] -> 规划 -> 实施
-
-### 性能提示
-- 并行机会：explore + web search 可同时运行
-- 后台候选：测试套件运行
 
 ---
 
