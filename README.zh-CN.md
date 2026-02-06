@@ -40,7 +40,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 你的提示词
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.1            │
+│     Tool Advisor v3.2            │
 │     「放大器，而非指挥官」         │
 ├──────────────────────────────────┤
 │ 1. 发现环境                       │
@@ -64,6 +64,8 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 | **规模自适应输出** | 小任务<10行，大任务完整分析 |
 | **多选项建议** | 最多3种方案（稳妥 / 快速 / 深入）— 不强制执行 |
 | **能力差距分析** | 建议缺失工具 + 明确标注"没有也能完成" |
+| **Iron Rules & 反模式** | 6条边界规则防止顾问角色偏移为执行者；7种反模式及纠正方法 |
+| **阶段强制输出** | 每个阶段必须产生输出或明确标注"N/A" — 不可跳过 |
 | **人机协作** | 未经你的批准绝不安装 |
 
 ## 示例
@@ -75,7 +77,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 
 **输出：**
 ```markdown
-## Tool Advisor v3.1 — 环境与组合分析
+## Tool Advisor v3.2 — 环境与组合分析
 
 Prompt: `将认证模块重构为 JWT`
 

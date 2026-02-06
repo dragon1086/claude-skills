@@ -40,7 +40,7 @@ El skill se activa cuando mencionas **tool-advisor** o pides recomendaciones de 
 Tu Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.1            │
+│     Tool Advisor v3.2            │
 │     "Amplificador, no Comandante"│
 ├──────────────────────────────────┤
 │ 1. Descubrir Entorno             │
@@ -64,6 +64,8 @@ Opciones + Tabla de Accion Rapida
 | **Salida Adaptativa** | Tareas pequenas <10 lineas; tareas grandes analisis completo |
 | **Sugerencias Multi-Opcion** | Hasta 3 enfoques (Metodico / Rapido / Profundo) — nunca impone |
 | **Analisis de Brechas** | Sugiere herramientas faltantes con aviso "realizable sin estas" |
+| **Iron Rules & Anti-Patrones** | 6 reglas limite previenen la deriva de asesor a ejecutor; 7 anti-patrones con correcciones |
+| **Ejecucion de Fases** | Cada fase DEBE producir salida o "N/A" explicito — sin saltar |
 | **Human-in-the-loop** | Nunca instala sin tu aprobacion |
 
 ## Ejemplo
@@ -75,7 +77,7 @@ Analiza con tool-advisor: Refactorizar modulo auth para usar tokens JWT
 
 **Salida:**
 ```markdown
-## Tool Advisor v3.1 — Analisis de Entorno y Composicion
+## Tool Advisor v3.2 — Analisis de Entorno y Composicion
 
 Prompt: `Refactorizar modulo auth para usar tokens JWT`
 

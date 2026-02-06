@@ -40,7 +40,7 @@ Der Skill wird aktiviert, wenn Sie **tool-advisor** erwahnen oder nach Tool-Empf
 Ihr Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.1            │
+│     Tool Advisor v3.2            │
 │  „Verstarker, nicht Kommandant"  │
 ├──────────────────────────────────┤
 │ 1. Umgebung entdecken            │
@@ -64,6 +64,8 @@ Optionen + Schnellaktion-Tabelle
 | **Adaptive Ausgabe** | Kleine Aufgaben <10 Zeilen; grosse Aufgaben vollstandige Analyse |
 | **Multi-Optionen-Vorschlage** | Bis zu 3 Ansatze (Methodisch / Schnell / Tiefgehend) — nie aufgezwungen |
 | **Luckenanalyse** | Schlagt fehlende Tools vor mit Hinweis „auch ohne diese machbar" |
+| **Iron Rules & Anti-Patterns** | 6 Grenzregeln verhindern Abdriften vom Berater zum Ausfuhrer; 7 Anti-Patterns mit Korrekturen |
+| **Phasen-Durchsetzung** | Jede Phase MUSS Ausgabe oder explizites „N/A" produzieren — kein Uberspringen |
 | **Human-in-the-loop** | Installiert niemals ohne Ihre Zustimmung |
 
 ## Beispiel
@@ -75,7 +77,7 @@ Analysiere mit tool-advisor: Auth-Modul refaktorisieren fur JWT-Token
 
 **Ausgabe:**
 ```markdown
-## Tool Advisor v3.1 — Umgebungs- und Kompositionsanalyse
+## Tool Advisor v3.2 — Umgebungs- und Kompositionsanalyse
 
 Prompt: `Auth-Modul refaktorisieren fur JWT-Token`
 

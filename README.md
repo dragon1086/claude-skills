@@ -40,7 +40,7 @@ The skill activates when you mention **tool-advisor** or ask for tool recommenda
 Your Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.1            │
+│     Tool Advisor v3.2            │
 │     "Amplifier, not Commander"   │
 ├──────────────────────────────────┤
 │ 1. Discover Environment          │
@@ -64,6 +64,8 @@ Options + Quick Action table
 | **Scale-Adaptive Output** | Small tasks get <10 lines; large tasks get full analysis |
 | **Multi-Option Suggestions** | Up to 3 approaches (Methodical / Fast / Deep) — never mandates |
 | **Capability Gap Analysis** | Suggests missing tools with "doable without these" disclaimer |
+| **Iron Rules & Anti-Patterns** | 6 hard boundaries prevent advisor-to-executor drift; 7 anti-patterns with corrections |
+| **Phase Enforcement** | Every phase MUST produce output or explicit "N/A" — no skipping allowed |
 | **Human-in-the-loop** | Never installs without your approval |
 
 ## Example
@@ -75,7 +77,7 @@ Analyze with tool-advisor: Refactor auth module to use JWT tokens
 
 **Output:**
 ```markdown
-## Tool Advisor v3.1 — Environment & Composition Analysis
+## Tool Advisor v3.2 — Environment & Composition Analysis
 
 Prompt: `Refactor auth module to use JWT tokens`
 

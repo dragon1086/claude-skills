@@ -40,7 +40,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 프롬프트 입력
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.1            │
+│     Tool Advisor v3.2            │
 │     "증폭기, 지휘관이 아닌"       │
 ├──────────────────────────────────┤
 │ 1. 환경 발견                      │
@@ -64,6 +64,8 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 | **규모 적응형 출력** | 소규모 태스크 <10줄, 대규모 태스크 전체 분석 |
 | **다중 옵션 제시** | 최대 3가지 접근법 (안전 / 빠름 / 깊이) — 강제하지 않음 |
 | **역량 갭 분석** | 미설치 도구 제안 + "없어도 가능" 명시 |
+| **Iron Rules & Anti-Patterns** | 6개 경계 규칙으로 advisor→executor 역할 이탈 방지; 7개 안티패턴과 교정 방법 |
+| **단계별 출력 강제** | 모든 단계가 출력을 생성하거나 명시적 "N/A" 표시 — 건너뛰기 불가 |
 | **Human-in-the-loop** | 사용자 승인 없이 절대 설치하지 않음 |
 
 ## 예시
@@ -75,7 +77,7 @@ tool-advisor로 분석해줘: 인증 모듈을 JWT로 리팩토링
 
 **출력:**
 ```markdown
-## Tool Advisor v3.1 — 환경 & 구성 분석
+## Tool Advisor v3.2 — 환경 & 구성 분석
 
 Prompt: `인증 모듈을 JWT로 리팩토링`
 

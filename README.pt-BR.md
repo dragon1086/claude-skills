@@ -40,7 +40,7 @@ A skill e ativada quando voce menciona **tool-advisor** ou pede recomendacoes de
 Seu Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.1            │
+│     Tool Advisor v3.2            │
 │  "Amplificador, nao Comandante" │
 ├──────────────────────────────────┤
 │ 1. Descobrir Ambiente            │
@@ -64,6 +64,8 @@ Opcoes + Tabela de Acao Rapida
 | **Saida Adaptativa** | Tarefas pequenas <10 linhas; tarefas grandes analise completa |
 | **Sugestoes Multi-Opcao** | Ate 3 abordagens (Metodico / Rapido / Profundo) — nunca impoe |
 | **Analise de Lacunas** | Sugere ferramentas faltantes com aviso "realizavel sem estas" |
+| **Iron Rules & Anti-Padroes** | 6 regras limite previnem desvio de consultor para executor; 7 anti-padroes com correcoes |
+| **Aplicacao de Fases** | Cada fase DEVE produzir saida ou "N/A" explicito — sem pular |
 | **Human-in-the-loop** | Nunca instala sem sua aprovacao |
 
 ## Exemplo
@@ -75,7 +77,7 @@ Analise com tool-advisor: Refatorar modulo auth para usar tokens JWT
 
 **Saida:**
 ```markdown
-## Tool Advisor v3.1 — Analise de Ambiente e Composicao
+## Tool Advisor v3.2 — Analise de Ambiente e Composicao
 
 Prompt: `Refatorar modulo auth para usar tokens JWT`
 
