@@ -64,7 +64,7 @@ Optionen + Schnellaktion-Tabelle
 | **Adaptive Ausgabe** | Kleine Aufgaben <10 Zeilen; grosse Aufgaben vollstandige Analyse |
 | **Multi-Optionen-Vorschlage** | Bis zu 3 Ansatze (Methodisch / Schnell / Tiefgehend) — nie aufgezwungen |
 | **Luckenanalyse** | Schlagt fehlende Tools vor mit Hinweis „auch ohne diese machbar" |
-| **Iron Rules & Anti-Patterns** | 6 Grenzregeln verhindern Abdriften vom Berater zum Ausfuhrer; 7 Anti-Patterns mit Korrekturen |
+| **Iron Rules & Anti-Patterns** | 9 Grenzregeln verhindern Abdriften vom Berater zum Ausfuhrer; 3 Anti-Patterns |
 | **Phasen-Durchsetzung** | Jede Phase MUSS Ausgabe oder explizites „N/A" produzieren — kein Uberspringen |
 | **Human-in-the-loop** | Installiert niemals ohne Ihre Zustimmung |
 

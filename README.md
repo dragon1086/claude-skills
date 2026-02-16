@@ -64,7 +64,7 @@ Options + Quick Action table
 | **Scale-Adaptive Output** | Small tasks get <10 lines; large tasks get full analysis |
 | **Multi-Option Suggestions** | Up to 3 approaches (Methodical / Fast / Deep) — never mandates |
 | **Capability Gap Analysis** | Suggests missing tools with "doable without these" disclaimer |
-| **Iron Rules & Anti-Patterns** | 6 hard boundaries prevent advisor-to-executor drift; 7 anti-patterns with corrections |
+| **Iron Rules & Anti-Patterns** | 9 hard boundaries prevent advisor-to-executor drift; 3 concise anti-patterns |
 | **Phase Enforcement** | Every phase MUST produce output or explicit "N/A" — no skipping allowed |
 | **Human-in-the-loop** | Never installs without your approval |
 

@@ -64,7 +64,7 @@ Opciones + Tabla de Accion Rapida
 | **Salida Adaptativa** | Tareas pequenas <10 lineas; tareas grandes analisis completo |
 | **Sugerencias Multi-Opcion** | Hasta 3 enfoques (Metodico / Rapido / Profundo) — nunca impone |
 | **Analisis de Brechas** | Sugiere herramientas faltantes con aviso "realizable sin estas" |
-| **Iron Rules & Anti-Patrones** | 6 reglas limite previenen la deriva de asesor a ejecutor; 7 anti-patrones con correcciones |
+| **Iron Rules & Anti-Patrones** | 9 reglas limite previenen la deriva de asesor a ejecutor; 3 anti-patrones concisos |
 | **Ejecucion de Fases** | Cada fase DEBE producir salida o "N/A" explicito — sin saltar |
 | **Human-in-the-loop** | Nunca instala sin tu aprobacion |
 

@@ -64,7 +64,7 @@ Options + Tableau d'Action Rapide
 | **Sortie Adaptative** | Petites taches <10 lignes ; grandes taches analyse complete |
 | **Suggestions Multi-Options** | Jusqu'a 3 approches (Methodique / Rapide / Approfondi) — jamais impose |
 | **Analyse des Lacunes** | Suggere les outils manquants avec mention « realisable sans ceux-ci » |
-| **Iron Rules & Anti-Patterns** | 6 regles limites empechent la derive de conseiller vers executeur ; 7 anti-patterns avec corrections |
+| **Iron Rules & Anti-Patterns** | 9 regles limites empechent la derive de conseiller vers executeur ; 3 anti-patterns concis |
 | **Application des Phases** | Chaque phase DOIT produire une sortie ou un « N/A » explicite — pas de saut |
 | **Human-in-the-loop** | N'installe jamais sans votre approbation |
 
