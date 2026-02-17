@@ -18,6 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/insta
 **方法2: [skills.sh](https://skills.sh)経由**
 ```bash
 npx skills add dragon1086/claude-skills -y --agent claude-code
+npx skills add dragon1086/claude-skills -y --agent codex
 ```
 
 アップデートするには、同じコマンドを再度実行してください。
@@ -40,7 +41,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 プロンプト入力
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.2            │
+│     Tool Advisor v3.3            │
 │     「増幅器、司令官ではない」     │
 ├──────────────────────────────────┤
 │ 1. 環境発見                       │
@@ -77,7 +78,7 @@ tool-advisorで分析して: 認証モジュールをJWTにリファクタリン
 
 **出力:**
 ```markdown
-## Tool Advisor v3.2 — 環境 & 構成分析
+## Tool Advisor v3.3 — 環境 & 構成分析
 
 Prompt: `認証モジュールをJWTにリファクタリング`
 
@@ -125,7 +126,7 @@ Task(Explore) -> EnterPlanMode -> 段階的にEdit -> Bash(pytest)
 
 ## 要件
 
-- Claude Code CLI
+- Claude Code CLI and/or Codex CLI
 
 ## ライセンス
 

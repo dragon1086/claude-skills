@@ -18,6 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/insta
 **Option 2 : Via [skills.sh](https://skills.sh)**
 ```bash
 npx skills add dragon1086/claude-skills -y --agent claude-code
+npx skills add dragon1086/claude-skills -y --agent codex
 ```
 
 Pour mettre a jour, executez la meme commande a nouveau.
@@ -40,7 +41,7 @@ La skill s'active lorsque vous mentionnez **tool-advisor** ou demandez des recom
 Votre Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.2            │
+│     Tool Advisor v3.3            │
 │  « Amplificateur, pas Commandant │
 ├──────────────────────────────────┤
 │ 1. Decouvrir l'Environnement     │
@@ -77,7 +78,7 @@ Analyse avec tool-advisor : Refactoriser le module auth pour utiliser les tokens
 
 **Sortie :**
 ```markdown
-## Tool Advisor v3.2 — Analyse d'Environnement et Composition
+## Tool Advisor v3.3 — Analyse d'Environnement et Composition
 
 Prompt: `Refactoriser le module auth pour utiliser les tokens JWT`
 
@@ -125,7 +126,7 @@ Task(Explore) -> EnterPlanMode -> Edit par etapes -> Bash(pytest)
 
 ## Prerequis
 
-- Claude Code CLI
+- Claude Code CLI and/or Codex CLI
 
 ## Licence
 

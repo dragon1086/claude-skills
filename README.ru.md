@@ -18,6 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/insta
 **Способ 2: Через [skills.sh](https://skills.sh)**
 ```bash
 npx skills add dragon1086/claude-skills -y --agent claude-code
+npx skills add dragon1086/claude-skills -y --agent codex
 ```
 
 Для обновления выполните ту же команду снова.
@@ -40,7 +41,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 Ваш промпт
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.2            │
+│     Tool Advisor v3.3            │
 │  «Усилитель, не Командир»        │
 ├──────────────────────────────────┤
 │ 1. Обнаружение среды              │
@@ -77,7 +78,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 
 **Вывод:**
 ```markdown
-## Tool Advisor v3.2 — Анализ среды и композиции
+## Tool Advisor v3.3 — Анализ среды и композиции
 
 Prompt: `Рефакторинг модуля auth для использования JWT токенов`
 
@@ -125,7 +126,7 @@ Task(Explore) -> EnterPlanMode -> Edit поэтапно -> Bash(pytest)
 
 ## Требования
 
-- Claude Code CLI
+- Claude Code CLI and/or Codex CLI
 
 ## Лицензия
 

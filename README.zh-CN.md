@@ -18,6 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/insta
 **方式二：通过 [skills.sh](https://skills.sh)**
 ```bash
 npx skills add dragon1086/claude-skills -y --agent claude-code
+npx skills add dragon1086/claude-skills -y --agent codex
 ```
 
 更新时运行相同的命令即可。
@@ -40,7 +41,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 你的提示词
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.2            │
+│     Tool Advisor v3.3            │
 │     「放大器，而非指挥官」         │
 ├──────────────────────────────────┤
 │ 1. 发现环境                       │
@@ -77,7 +78,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 
 **输出：**
 ```markdown
-## Tool Advisor v3.2 — 环境与组合分析
+## Tool Advisor v3.3 — 环境与组合分析
 
 Prompt: `将认证模块重构为 JWT`
 
@@ -125,7 +126,7 @@ Task(Explore) -> EnterPlanMode -> 分阶段 Edit -> Bash(pytest)
 
 ## 要求
 
-- Claude Code CLI
+- Claude Code CLI and/or Codex CLI
 
 ## 许可证
 
