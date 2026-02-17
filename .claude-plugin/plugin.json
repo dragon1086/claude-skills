@@ -1,6 +1,6 @@
 {
   "name": "adv",
-  "description": "Curated skills for Claude Code power users - tool selection, workflow optimization, and productivity",
+  "description": "Curated skills for Claude Code and Codex power users - tool selection, workflow optimization, and productivity",
   "version": "1.0.0",
   "author": {
     "name": "dragon1086"
@@ -10,6 +10,7 @@
   "license": "MIT",
   "keywords": [
     "claude-code",
+    "codex",
     "skills",
     "tool-advisor",
     "workflow",

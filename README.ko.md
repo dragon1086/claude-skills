@@ -2,7 +2,7 @@
 
 [English](./README.md) | **한국어** | [日本語](./README.ja.md) | [中文](./README.zh-CN.md) | [Español](./README.es.md) | [Português](./README.pt-BR.md) | [Русский](./README.ru.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md)
 
-**당신의 도구 환경을 발견하고 역량을 증폭합니다.**
+**당신의 도구 환경을 발견하고 역량을 증폭합니다. (Claude Code + Codex)**
 
 Tool Advisor는 런타임 환경을 스캔하여 — MCP 서버, 스킬, 플러그인, CLI 도구 — 최적의 도구 조합을 **강제 아닌 옵션**으로 제시합니다. 모델이 스스로 알지 못하는 정보를 제공하여 잠재력을 극대화합니다.
 
@@ -10,14 +10,24 @@ Tool Advisor는 런타임 환경을 스캔하여 — MCP 서버, 스킬, 플러�
 
 ## 설치
 
-**방법 1: 원라인 설치**
+**방법 1: 원라인 설치 (기본: Claude Code + Codex 동시 설치)**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash
+```
+
+특정 에이전트만 설치하려면:
+```bash
+# Codex만 설치
+curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash -s -- --agent codex
+
+# Claude Code만 설치
+curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash -s -- --agent claude-code
 ```
 
 **방법 2: [skills.sh](https://skills.sh) 사용**
 ```bash
 npx skills add dragon1086/claude-skills -y --agent claude-code
+npx skills add dragon1086/claude-skills -y --agent codex
 ```
 
 업데이트하려면 같은 명령어를 다시 실행하세요.
@@ -30,6 +40,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 "tool-advisor로 분석해줘: 인증 모듈 리팩토링"
 "tool-advisor, 이 데이터베이스 마이그레이션 어떻게 해야 해?"
 "사용자 인증 구현하려면 어떤 방법이 좋을까?"
+"$tool-advisor로 이 작업 분석해줘: v2 API 마이그레이션 배포"
 ```
 
 **tool-advisor**를 언급하거나 도구 추천을 요청하면 스킬이 활성화됩니다.
@@ -40,7 +51,7 @@ npx skills add dragon1086/claude-skills -y --agent claude-code
 프롬프트 입력
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.2            │
+│     Tool Advisor v3.3            │
 │     "증폭기, 지휘관이 아닌"       │
 ├──────────────────────────────────┤
 │ 1. 환경 발견                      │
@@ -77,7 +88,7 @@ tool-advisor로 분석해줘: 인증 모듈을 JWT로 리팩토링
 
 **출력:**
 ```markdown
-## Tool Advisor v3.2 — 환경 & 구성 분석
+## Tool Advisor v3.3 — 환경 & 구성 분석
 
 Prompt: `인증 모듈을 JWT로 리팩토링`
 
@@ -125,7 +136,7 @@ Task(Explore) -> EnterPlanMode -> 단계별 Edit -> Bash(pytest)
 
 ## 요구 사항
 
-- Claude Code CLI
+- Claude Code CLI 또는 Codex CLI
 
 ## 라이선스
 

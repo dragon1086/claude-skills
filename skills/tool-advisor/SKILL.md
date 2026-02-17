@@ -4,12 +4,12 @@ description: Discovers your full tool environment and amplifies prompts with cap
 argument-hint: <prompt or task description>
 metadata:
   author: aerok
-  version: "3.2.1"
+  version: "3.3.0"
 aliases:
   - ta
 ---
 
-# Tool Advisor v3.2 — Hybrid Amplifier + Optional Composer
+# Tool Advisor v3.3 — Cross-Agent Amplifier + Optional Composer
 
 You are a **Tool Amplifier**: DISCOVER what the user has, DELIVER enriched context, SUGGEST tool compositions as options. You arm the model with knowledge — you never replace its judgment.
 
@@ -17,7 +17,7 @@ You are a **Tool Amplifier**: DISCOVER what the user has, DELIVER enriched conte
 
 ## Iron Rules
 
-1. **NEVER execute actions.** No `Edit`, `Write`, `Bash(git ...)`, `Task(executor)`. You scan and advise.
+1. **NEVER execute actions.** No edits, commits, installs, or task executors. You scan and advise.
 2. **Complete ALL 6 phases.** Each produces visible output or "N/A — [reason]". No skipping.
 3. **MUST end with Quick Action table.** Copy-paste first steps. No exceptions.
 4. **No internal deliberation in output.** Reason internally, present conclusions only.
@@ -33,12 +33,12 @@ You are a **Tool Amplifier**: DISCOVER what the user has, DELIVER enriched conte
 
 ### Layer 1 — Native Tools (enumerate, don't scan)
 
-- **File**: Read, Write, Edit, Glob, Grep
-- **Execution**: Bash, NotebookEdit
-- **Web**: WebSearch, WebFetch
-- **Agent**: Task (subagent types: Explore, Plan, general-purpose, Bash, and any installed plugin agents)
-- **Planning**: EnterPlanMode, AskUserQuestion
-- **Tasks**: TaskCreate, TaskUpdate, TaskList, TaskGet
+- **File/Search**: Read, Write, Edit, Glob, Grep (or equivalent agent-native tools)
+- **Execution**: shell/terminal execution tools
+- **Web**: web search/fetch tools (if available)
+- **Agent**: subagent/delegation tools (if available)
+- **Planning**: plan/user-question tools (if available)
+- **Task Tracking**: task CRUD tools (if available)
 
 ### Layer 2–4 — Dynamic Discovery (single Bash call)
 
@@ -54,8 +54,39 @@ try:
 except: print('  (none)')
 " 2>/dev/null
 done ;
+for f in ~/.codex/config.json ~/.codex/settings.json .codex/config.json .codex/settings.json; do
+  [ -f "$f" ] && echo "-- $f --" && python3 -c "
+import sys,json
+try:
+  d=json.load(open('$f')); servers=d.get('mcpServers',{}) or d.get('mcp_servers',{})
+  for k in servers: print(f'  {k}')
+  if not servers: print('  (none)')
+except: print('  (none)')
+" 2>/dev/null
+done ;
+if [ -f ~/.codex/config.toml ]; then
+  echo "-- ~/.codex/config.toml --" ;
+  python3 -c "
+import re, pathlib
+p=pathlib.Path('~/.codex/config.toml').expanduser()
+txt=p.read_text(errors='ignore')
+found=False
+for m in re.finditer(r'^\\s*\\[mcp_servers\\.([^\\]]+)\\]', txt, re.M):
+  print(f'  {m.group(1)}'); found=True
+if not found: print('  (none)')
+" 2>/dev/null || echo "  (none)" ;
+fi ;
 echo "=== Skills ===" ;
-for d in ~/.claude/skills/*/; do [ -d "$d" ] && echo "  $(basename $d): $(head -10 $d/SKILL.md 2>/dev/null | grep '^description:' | sed 's/description: //')"; done ;
+SKILLS_FOUND=0 ;
+for root in ~/.claude/skills ~/.agents/skills ~/.codex/skills; do
+  [ -d "$root" ] || continue ;
+  for d in "$root"/*/; do
+    [ -d "$d" ] || continue ;
+    echo "  $(basename "$d"): $(head -10 "$d/SKILL.md" 2>/dev/null | grep '^description:' | sed 's/description: //')" ;
+    SKILLS_FOUND=1 ;
+  done ;
+done ;
+[ "$SKILLS_FOUND" -eq 0 ] && echo "  (none)" ;
 echo "=== Plugins ===" ;
 cat ~/.claude/plugins/installed_plugins.json 2>/dev/null | python3 -c "
 import sys,json
@@ -66,9 +97,13 @@ try:
 except: print('  (none)')
 " 2>/dev/null || echo "  (none)" ;
 echo "=== Agents ===" ;
-ls ~/.claude/agents/ 2>/dev/null || echo "  (none)" ;
+AGENTS_FOUND=0 ;
+for d in ~/.claude/agents ~/.agents/agents ~/.codex/agents; do
+  [ -d "$d" ] && echo "-- $d --" && ls "$d" && AGENTS_FOUND=1
+done ;
+[ "$AGENTS_FOUND" -eq 0 ] && echo "  (none)" ;
 echo "=== Dev Tools ===" ;
-for cmd in git node python3 docker pytest npm pnpm bun cargo go java ruby; do
+for cmd in git node python3 docker pytest npm pnpm bun cargo go java ruby codex claude; do
   command -v $cmd >/dev/null 2>&1 && echo "  $cmd: $(command -v $cmd)"
 done
 ```
@@ -150,7 +185,7 @@ If none apply: "N/A".
 ### Full (Scale=Medium or Large)
 
 ```markdown
-## Tool Advisor v3.2
+## Tool Advisor v3.3
 
 Prompt: `$ARGUMENTS`
 
@@ -208,7 +243,7 @@ Good for: [tradeoff]
 ### Collapsed (Scale=Small)
 
 ```markdown
-## Tool Advisor v3.2
+## Tool Advisor v3.3
 
 Prompt: `$ARGUMENTS`
 Env: [key tools] | Done when: [criteria]
@@ -235,7 +270,7 @@ Env: [key tools] | Done when: [criteria]
 **Input**: `Fix the typo in README`
 
 ```markdown
-## Tool Advisor v3.2
+## Tool Advisor v3.3
 
 Prompt: `Fix the typo in README`
 Env: native tools | Done when: typo corrected, no other changes

@@ -2,7 +2,7 @@
 
 **English** | [한국어](./README.ko.md) | [日本語](./README.ja.md) | [中文](./README.zh-CN.md) | [Español](./README.es.md) | [Português](./README.pt-BR.md) | [Русский](./README.ru.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md)
 
-**Discover your tool environment. Amplify your capabilities.**
+**Discover your tool environment. Amplify your capabilities. (Claude Code + Codex)**
 
 Tool Advisor scans your runtime environment — MCP servers, skills, plugins, CLI tools — and suggests optimal tool compositions as **non-binding options** with copy-paste commands. It arms the model with knowledge it wouldn't otherwise have.
 
@@ -10,14 +10,24 @@ Tool Advisor scans your runtime environment — MCP servers, skills, plugins, CL
 
 ## Install
 
-**Option 1: One-line install**
+**Option 1: One-line install (default: Claude Code + Codex)**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash
+```
+
+Install for a single agent:
+```bash
+# Codex only
+curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash -s -- --agent codex
+
+# Claude Code only
+curl -fsSL https://raw.githubusercontent.com/dragon1086/claude-skills/main/install.sh | bash -s -- --agent claude-code
 ```
 
 **Option 2: Via [skills.sh](https://skills.sh)**
 ```bash
 npx skills add dragon1086/claude-skills -y --agent claude-code
+npx skills add dragon1086/claude-skills -y --agent codex
 ```
 
 To update, run the same command again.
@@ -30,6 +40,7 @@ Just ask naturally:
 "Analyze with tool-advisor: refactor the auth module"
 "tool-advisor, how should I tackle this database migration?"
 "What's the best approach for implementing user authentication?"
+"Use $tool-advisor to analyze this task: ship v2 API migration"
 ```
 
 The skill activates when you mention **tool-advisor** or ask for tool recommendations.
@@ -40,7 +51,7 @@ The skill activates when you mention **tool-advisor** or ask for tool recommenda
 Your Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.2            │
+│     Tool Advisor v3.3            │
 │     "Amplifier, not Commander"   │
 ├──────────────────────────────────┤
 │ 1. Discover Environment          │
@@ -77,7 +88,7 @@ Analyze with tool-advisor: Refactor auth module to use JWT tokens
 
 **Output:**
 ```markdown
-## Tool Advisor v3.2 — Environment & Composition Analysis
+## Tool Advisor v3.3 — Environment & Composition Analysis
 
 Prompt: `Refactor auth module to use JWT tokens`
 
@@ -125,7 +136,7 @@ Task(Explore) -> EnterPlanMode -> Edit in stages -> Bash(pytest)
 
 ## Requirements
 
-- Claude Code CLI
+- Claude Code CLI and/or Codex CLI
 
 ## License
 
