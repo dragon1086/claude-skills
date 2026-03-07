@@ -41,7 +41,7 @@ La skill s'active lorsque vous mentionnez **tool-advisor** ou demandez des recom
 Votre Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.3            │
+│     Tool Advisor v3.4            │
 │  « Amplificateur, pas Commandant │
 ├──────────────────────────────────┤
 │ 1. Decouvrir l'Environnement     │
@@ -78,7 +78,7 @@ Analyse avec tool-advisor : Refactoriser le module auth pour utiliser les tokens
 
 **Sortie :**
 ```markdown
-## Tool Advisor v3.3 — Analyse d'Environnement et Composition
+## Tool Advisor v3.4 — Analyse d'Environnement et Composition
 
 Prompt: `Refactoriser le module auth pour utiliser les tokens JWT`
 

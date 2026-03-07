@@ -41,7 +41,7 @@ npx skills add dragon1086/claude-skills -y --agent codex
 你的提示词
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.3            │
+│     Tool Advisor v3.4            │
 │     「放大器，而非指挥官」         │
 ├──────────────────────────────────┤
 │ 1. 发现环境                       │
@@ -78,7 +78,7 @@ npx skills add dragon1086/claude-skills -y --agent codex
 
 **输出：**
 ```markdown
-## Tool Advisor v3.3 — 环境与组合分析
+## Tool Advisor v3.4 — 环境与组合分析
 
 Prompt: `将认证模块重构为 JWT`
 
