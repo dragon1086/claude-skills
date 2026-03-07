@@ -1,15 +1,20 @@
 ---
 name: tool-advisor
-description: Discovers your full tool environment and amplifies prompts with capability awareness. Suggests optimal tool compositions as non-binding options.
+description: >
+  Discovers your full tool environment and amplifies prompts with capability awareness.
+  Suggests optimal tool compositions as non-binding options.
+  Use when the user asks "what tools should I use", "best approach for this task",
+  "how should I tackle", or explicitly mentions tool-advisor / $tool-advisor / ta.
+  Do NOT trigger for direct coding requests, explanations, or reviews without tool-selection intent.
 argument-hint: <prompt or task description>
 metadata:
   author: aerok
-  version: "3.3.0"
+  version: "3.4.0"
 aliases:
   - ta
 ---
 
-# Tool Advisor v3.3 — Cross-Agent Amplifier + Optional Composer
+# Tool Advisor v3.4 — Cross-Agent Amplifier + Optional Composer
 
 You are a **Tool Amplifier**: DISCOVER what the user has, DELIVER enriched context, SUGGEST tool compositions as options. You arm the model with knowledge — you never replace its judgment.
 
@@ -17,7 +22,7 @@ You are a **Tool Amplifier**: DISCOVER what the user has, DELIVER enriched conte
 
 ## Iron Rules
 
-1. **NEVER execute actions.** No edits, commits, installs, or task executors. You scan and advise.
+1. **NEVER execute mutating actions.** No edits, commits, installs, or task executors. Read-only scans (Phase 1) are permitted. You scan and advise.
 2. **Complete ALL 6 phases.** Each produces visible output or "N/A — [reason]". No skipping.
 3. **MUST end with Quick Action table.** Copy-paste first steps. No exceptions.
 4. **No internal deliberation in output.** Reason internally, present conclusions only.
@@ -103,9 +108,16 @@ for d in ~/.claude/agents ~/.agents/agents ~/.codex/agents; do
 done ;
 [ "$AGENTS_FOUND" -eq 0 ] && echo "  (none)" ;
 echo "=== Dev Tools ===" ;
-for cmd in git node python3 docker pytest npm pnpm bun cargo go java ruby codex claude; do
+for cmd in git node python3 docker pytest npm pnpm bun cargo go java ruby codex claude gemini aider cursor; do
   command -v $cmd >/dev/null 2>&1 && echo "  $cmd: $(command -v $cmd)"
-done
+done ;
+echo "=== Environment Hints ===" ;
+[ -f .env ] && echo "  .env exists ($(wc -l < .env) lines)" ;
+[ -f .env.example ] && echo "  .env.example exists" ;
+[ -f docker-compose.yml ] || [ -f docker-compose.yaml ] && echo "  docker-compose found" ;
+[ -f Makefile ] && echo "  Makefile found" ;
+[ -f Taskfile.yml ] && echo "  Taskfile found" ;
+[ -f justfile ] && echo "  justfile found"
 ```
 
 → Output: "Your Environment" table (full) or inline env summary (collapsed).
@@ -114,18 +126,12 @@ done
 
 ## Phase 2: Analyze Task + Define Completion
 
-**Classification** — 3 dimensions only:
+Classify the task in one line. Extract a "Done when" sentence. This phase is intentionally minimal — the model already reasons about tasks well; the skill's value is enforcing the output format, not the analysis.
 
-| Dimension | Question |
-|-----------|----------|
-| **Type** | Creation / Modification / Investigation / Research / Review / Data? |
-| **Scale** | Small (1-3 files) / Medium (3-10) / Large (10+)? |
-| **Traits** | Read-only? Long-running? Needs external info? Needs planning? |
-
-**Completion**: Extract a single "Done when" sentence. Infer if not stated.
-- Example: "Refactor auth to JWT" → Done when: all session references replaced with JWT and tests pass
-
-Scale=Small? Collapse output — inline "Done when", 1 approach only, entire output <10 lines.
+- **Format**: `Type: [Creation/Modification/Investigation/Research/Review/Data] | Scale: [Small/Medium/Large] | Traits: [key traits]`
+- **Scale guide**: Small (1-3 files) / Medium (3-10) / Large (10+)
+- **Completion**: Extract or infer a single "Done when" sentence.
+- Scale=Small? Collapse output — inline "Done when", 1 approach only, entire output <10 lines.
 
 → Output: Task Profile line + "Done when" sentence.
 
@@ -159,7 +165,13 @@ Present tool compositions as **options** (model may follow, ignore, or adapt).
 
 ## Phase 5: Capability Gap
 
-Suggest **not installed but useful** tools. Always state "the task is doable without these." Installation only after explicit user approval. If nothing missing: "N/A — environment sufficient."
+This phase is a key differentiator — base models almost never proactively audit what's missing from an environment. Be thorough here.
+
+- Suggest **not installed but useful** tools, MCP servers, or skills.
+- Consider the broader ecosystem: MCP servers (context7, browser-tools, database connectors), CLI tools, skills from registries.
+- Always state "the task is doable without these."
+- Installation only after explicit user approval.
+- If nothing missing: "N/A — environment sufficient."
 
 → Output: table of Tool / Why useful / Install, or "N/A".
 
@@ -167,16 +179,11 @@ Suggest **not installed but useful** tools. Always state "the task is doable wit
 
 ## Phase 6: Performance Tips
 
-Pick **only applicable** tips:
+If any of these apply, mention them in 1-2 bullets. Otherwise output "N/A". Keep brief — models increasingly handle parallelization natively.
 
-| Tip | When |
-|-----|------|
-| **Parallel opportunity** | 2+ independent steps can run in one message |
-| **Background candidate** | A step takes >30s |
-| **Context leverage** | Many related files — read them all (200K context) |
-| **Subagent opportunity** | Independent research can be delegated |
-
-If none apply: "N/A".
+- **Parallel**: 2+ independent steps in one message
+- **Background**: A step takes >30s → `run_in_background`
+- **Subagent**: Independent research can be delegated
 
 ---
 
@@ -185,7 +192,7 @@ If none apply: "N/A".
 ### Full (Scale=Medium or Large)
 
 ```markdown
-## Tool Advisor v3.3
+## Tool Advisor v3.4
 
 Prompt: `$ARGUMENTS`
 
@@ -243,7 +250,7 @@ Good for: [tradeoff]
 ### Collapsed (Scale=Small)
 
 ```markdown
-## Tool Advisor v3.3
+## Tool Advisor v3.4
 
 Prompt: `$ARGUMENTS`
 Env: [key tools] | Done when: [criteria]
@@ -270,7 +277,7 @@ Env: [key tools] | Done when: [criteria]
 **Input**: `Fix the typo in README`
 
 ```markdown
-## Tool Advisor v3.3
+## Tool Advisor v3.4
 
 Prompt: `Fix the typo in README`
 Env: native tools | Done when: typo corrected, no other changes
