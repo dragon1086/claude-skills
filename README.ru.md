@@ -41,7 +41,7 @@ npx skills add dragon1086/claude-skills -y --agent codex
 Ваш промпт
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.3            │
+│     Tool Advisor v3.4            │
 │  «Усилитель, не Командир»        │
 ├──────────────────────────────────┤
 │ 1. Обнаружение среды              │
@@ -78,7 +78,7 @@ npx skills add dragon1086/claude-skills -y --agent codex
 
 **Вывод:**
 ```markdown
-## Tool Advisor v3.3 — Анализ среды и композиции
+## Tool Advisor v3.4 — Анализ среды и композиции
 
 Prompt: `Рефакторинг модуля auth для использования JWT токенов`
 

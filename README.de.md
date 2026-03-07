@@ -41,7 +41,7 @@ Der Skill wird aktiviert, wenn Sie **tool-advisor** erwahnen oder nach Tool-Empf
 Ihr Prompt
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.3            │
+│     Tool Advisor v3.4            │
 │  „Verstarker, nicht Kommandant"  │
 ├──────────────────────────────────┤
 │ 1. Umgebung entdecken            │
@@ -78,7 +78,7 @@ Analysiere mit tool-advisor: Auth-Modul refaktorisieren fur JWT-Token
 
 **Ausgabe:**
 ```markdown
-## Tool Advisor v3.3 — Umgebungs- und Kompositionsanalyse
+## Tool Advisor v3.4 — Umgebungs- und Kompositionsanalyse
 
 Prompt: `Auth-Modul refaktorisieren fur JWT-Token`
 

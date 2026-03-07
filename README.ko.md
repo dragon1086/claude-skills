@@ -51,7 +51,7 @@ npx skills add dragon1086/claude-skills -y --agent codex
 프롬프트 입력
     ↓
 ┌──────────────────────────────────┐
-│     Tool Advisor v3.3            │
+│     Tool Advisor v3.4            │
 │     "증폭기, 지휘관이 아닌"       │
 ├──────────────────────────────────┤
 │ 1. 환경 발견                      │
@@ -88,7 +88,7 @@ tool-advisor로 분석해줘: 인증 모듈을 JWT로 리팩토링
 
 **출력:**
 ```markdown
-## Tool Advisor v3.3 — 환경 & 구성 분석
+## Tool Advisor v3.4 — 환경 & 구성 분석
 
 Prompt: `인증 모듈을 JWT로 리팩토링`
 
