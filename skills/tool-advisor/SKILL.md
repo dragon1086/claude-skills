@@ -9,12 +9,12 @@ description: >
 argument-hint: <prompt or task description>
 metadata:
   author: aerok
-  version: "3.4.0"
+  version: "3.5.0"
 aliases:
   - ta
 ---
 
-# Tool Advisor v3.4 — Cross-Agent Amplifier + Optional Composer
+# Tool Advisor v3.5 — Cross-Agent Amplifier + Optional Composer
 
 You are a **Tool Amplifier**: DISCOVER what the user has, DELIVER enriched context, SUGGEST tool compositions as options. You arm the model with knowledge — you never replace its judgment.
 
@@ -87,7 +87,21 @@ for root in ~/.claude/skills ~/.agents/skills ~/.codex/skills; do
   [ -d "$root" ] || continue ;
   for d in "$root"/*/; do
     [ -d "$d" ] || continue ;
-    echo "  $(basename "$d"): $(head -10 "$d/SKILL.md" 2>/dev/null | grep '^description:' | sed 's/description: //')" ;
+    desc=$(head -25 "$d/SKILL.md" 2>/dev/null | python3 -c "
+import sys
+lines = sys.stdin.readlines()
+in_desc = False; parts = []
+for line in lines:
+    if line.startswith('description:'):
+        in_desc = True
+        v = line.split('description:',1)[1].strip().lstrip('>')
+        if v: parts.append(v)
+    elif in_desc:
+        if line.startswith(' ') or line.startswith('\t'): parts.append(line.strip())
+        else: break
+print(' '.join(parts)[:150])
+" 2>/dev/null) ;
+    echo "  $(basename "$d"): $desc" ;
     SKILLS_FOUND=1 ;
   done ;
 done ;
@@ -104,7 +118,15 @@ except: print('  (none)')
 echo "=== Agents ===" ;
 AGENTS_FOUND=0 ;
 for d in ~/.claude/agents ~/.agents/agents ~/.codex/agents; do
-  [ -d "$d" ] && echo "-- $d --" && ls "$d" && AGENTS_FOUND=1
+  [ -d "$d" ] || continue ;
+  echo "-- $d --" ;
+  for f in "$d"/*.md "$d"/*.yaml "$d"/*.yml "$d"/*.txt; do
+    [ -f "$f" ] || continue ;
+    name=$(basename "$f" | sed 's/\.[^.]*$//') ;
+    desc=$(head -20 "$f" 2>/dev/null | grep -E '^description:|^role:|^# ' | head -1 | sed 's/^[^:]*:[[:space:]]*//' | sed 's/^# //' | cut -c1-120) ;
+    echo "  $name: ${desc:-(no description)}" ;
+    AGENTS_FOUND=1 ;
+  done ;
 done ;
 [ "$AGENTS_FOUND" -eq 0 ] && echo "  (none)" ;
 echo "=== Dev Tools ===" ;
@@ -156,10 +178,11 @@ Present tool compositions as **options** (model may follow, ignore, or adapt).
 - Only tools **discovered in Phase 1** (uninstalled tools → Phase 5)
 - Mark one "Recommended"; state model's judgment prevails
 - **Scale=Small**: 1 option only
-- Each option = concrete **tool chain** (`Tool -> Tool -> Tool`) + "Good for" line
-- Adapt based on installed skills/MCP servers
+- Each option = concrete **tool chain** (`Tool -> Tool -> Tool`) + "Good for" line + optional "Agent" line
+- Adapt based on installed skills/MCP servers/agents discovered in Phase 1
+- **Agent recommendation**: If a discovered agent (from `~/.claude/agents` etc.) fits the task better than the default model, name it. If no custom agent is relevant, omit the Agent line — don't force it.
 
-→ Output: "Suggested Approaches" with 1-3 options.
+→ Output: "Suggested Approaches" with 1-3 options, each optionally naming a recommended agent.
 
 ---
 
@@ -192,7 +215,7 @@ If any of these apply, mention them in 1-2 bullets. Otherwise output "N/A". Keep
 ### Full (Scale=Medium or Large)
 
 ```markdown
-## Tool Advisor v3.4
+## Tool Advisor v3.5
 
 Prompt: `$ARGUMENTS`
 
@@ -200,7 +223,8 @@ Prompt: `$ARGUMENTS`
 | Layer | Available |
 |-------|-----------|
 | MCP Servers | [discovered] |
-| Skills | [discovered] |
+| Skills | [name: description, ...] |
+| Agents | [name: description, ...] |
 | Plugins | [discovered] |
 | CLI | [discovered] |
 
@@ -216,14 +240,17 @@ Prompt: `$ARGUMENTS`
 **A — Methodical** (Recommended)
 [step -> step -> step]
 Good for: [tradeoff]
+Agent: [agent name if a discovered agent fits — omit if none relevant]
 
 **B — Fast**
 [step -> step -> step]
 Good for: [tradeoff]
+Agent: [agent name if relevant — omit if none]
 
 **C — [Deep/Skill-enhanced/Agent-parallel]**
 [step -> step -> step]
 Good for: [tradeoff]
+Agent: [agent name if relevant — omit if none]
 
 ### Performance Tips
 - [only applicable tips, or N/A]
@@ -250,7 +277,7 @@ Good for: [tradeoff]
 ### Collapsed (Scale=Small)
 
 ```markdown
-## Tool Advisor v3.4
+## Tool Advisor v3.5
 
 Prompt: `$ARGUMENTS`
 Env: [key tools] | Done when: [criteria]
@@ -277,7 +304,7 @@ Env: [key tools] | Done when: [criteria]
 **Input**: `Fix the typo in README`
 
 ```markdown
-## Tool Advisor v3.4
+## Tool Advisor v3.5
 
 Prompt: `Fix the typo in README`
 Env: native tools | Done when: typo corrected, no other changes
