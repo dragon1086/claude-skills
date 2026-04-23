@@ -9,7 +9,7 @@ description: >
 argument-hint: <prompt or task description>
 metadata:
   author: aerok
-  version: "3.5.0"
+  version: "3.5.1"
 aliases:
   - ta
 ---
